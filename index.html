@@ -167,12 +167,34 @@
             background: #f8f9fc;
             border-bottom: 1px solid #e0e5ec;
             flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .writing-header .title {
             font-weight: 600;
             color: #2c3e50;
             font-size: 0.95rem;
+        }
+
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #6b7a8d;
+        }
+
+        .font-size-control input[type="range"] {
+            width: 80px;
+            cursor: pointer;
+        }
+
+        .font-size-control span {
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 30px;
+            text-align: center;
         }
 
         .word-count {
@@ -195,13 +217,13 @@
             border: none;
             resize: none;
             padding: 18px 20px;
-            font-size: 1.05rem;
             line-height: 1.8;
             color: #2c3e50;
             outline: none;
             font-family: 'Georgia', 'Times New Roman', serif;
             background: #ffffff;
             min-height: 0;
+            transition: font-size 0.2s;
         }
 
         .writing-area textarea::placeholder {
@@ -323,6 +345,28 @@
             align-items: center;
             gap: 8px;
             flex-shrink: 0;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .image-size-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #6b7a8d;
+        }
+
+        .image-size-control input[type="range"] {
+            width: 80px;
+            cursor: pointer;
+        }
+
+        .image-size-control span {
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 30px;
+            text-align: center;
         }
 
         .image-container {
@@ -334,7 +378,7 @@
             padding: 16px;
             position: relative;
             min-height: 0;
-            overflow: hidden;
+            overflow: auto;
         }
 
         .image-placeholder {
@@ -363,12 +407,13 @@
         }
 
         #previewImage {
-            max-width: 100%;
-            max-height: 100%;
             object-fit: contain;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
             display: none;
+            transition: max-width 0.3s, max-height 0.3s;
+            max-width: 90%;
+            max-height: 90%;
         }
 
         .upload-actions {
@@ -550,6 +595,11 @@
             <div class="writing-area">
                 <div class="writing-header">
                     <span class="title">✍️ Bài viết của bạn</span>
+                    <div class="font-size-control">
+                        <span>🔤 Cỡ chữ:</span>
+                        <input type="range" id="fontSizeSlider" min="12" max="28" value="18" step="1">
+                        <span id="fontSizeValue">18px</span>
+                    </div>
                     <div class="word-count"><span id="wordCount">0</span> từ</div>
                 </div>
                 <textarea id="essayInput" placeholder="Viết bài phân tích biểu đồ của bạn tại đây..."></textarea>
@@ -565,6 +615,11 @@
         <div class="right-panel" id="dropZone">
             <div class="upload-header">
                 <span>🖼️ Biểu đồ / Hình ảnh</span>
+                <div class="image-size-control">
+                    <span>🔍 Kích thước:</span>
+                    <input type="range" id="imageSizeSlider" min="30" max="100" value="90" step="1">
+                    <span id="imageSizeValue">90%</span>
+                </div>
             </div>
             <div class="image-container">
                 <div class="image-placeholder" id="placeholder">
@@ -621,6 +676,10 @@
             const jsonInput = document.getElementById('jsonInput');
             const savedList = document.getElementById('savedList');
             const savedCountSpan = document.getElementById('savedCount');
+            const fontSizeSlider = document.getElementById('fontSizeSlider');
+            const fontSizeValue = document.getElementById('fontSizeValue');
+            const imageSizeSlider = document.getElementById('imageSizeSlider');
+            const imageSizeValue = document.getElementById('imageSizeValue');
 
             let currentChartType = '';
             let savedQuestions = [];
@@ -633,6 +692,42 @@
                     currentChartType = this.getAttribute('data-chart');
                 });
             });
+
+            // ========== ĐIỀU CHỈNH CỠ CHỮ ==========
+            fontSizeSlider.addEventListener('input', function() {
+                const size = this.value;
+                essayInput.style.fontSize = size + 'px';
+                fontSizeValue.textContent = size + 'px';
+                // Lưu tùy chọn
+                localStorage.setItem('ielts_font_size', size);
+            });
+
+            // Khôi phục cỡ chữ đã lưu
+            const savedFontSize = localStorage.getItem('ielts_font_size');
+            if (savedFontSize) {
+                fontSizeSlider.value = savedFontSize;
+                essayInput.style.fontSize = savedFontSize + 'px';
+                fontSizeValue.textContent = savedFontSize + 'px';
+            }
+
+            // ========== ĐIỀU CHỈNH KÍCH THƯỚC HÌNH ==========
+            imageSizeSlider.addEventListener('input', function() {
+                const size = this.value;
+                previewImage.style.maxWidth = size + '%';
+                previewImage.style.maxHeight = size + '%';
+                imageSizeValue.textContent = size + '%';
+                // Lưu tùy chọn
+                localStorage.setItem('ielts_image_size', size);
+            });
+
+            // Khôi phục kích thước hình đã lưu
+            const savedImageSize = localStorage.getItem('ielts_image_size');
+            if (savedImageSize) {
+                imageSizeSlider.value = savedImageSize;
+                previewImage.style.maxWidth = savedImageSize + '%';
+                previewImage.style.maxHeight = savedImageSize + '%';
+                imageSizeValue.textContent = savedImageSize + '%';
+            }
 
             // ========== ĐẾM TỪ ==========
             function updateWordCount() {
@@ -706,11 +801,10 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
 
             sampleBtn.addEventListener('click', fillSample);
 
-            // ========== XỬ LÝ HÌNH ẢNH (CẢI TIẾN) ==========
+            // ========== XỬ LÝ HÌNH ẢNH ==========
             function displayImage(file) {
                 if (!file) return;
                 
-                // Kiểm tra nếu là file hình ảnh
                 if (file.type && file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
@@ -729,7 +823,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 showToast('🖼️ Đã tải hình biểu đồ lên!');
             }
 
-            // Khi chọn file từ input
             fileInput.addEventListener('change', function(e) {
                 if (e.target.files.length > 0) {
                     displayImage(e.target.files[0]);
@@ -737,7 +830,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 fileInput.value = '';
             });
 
-            // Kéo thả file từ máy tính
             dropZone.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -755,24 +847,20 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 e.stopPropagation();
                 dropZone.classList.remove('dragover');
 
-                // Lấy file từ drop
                 const files = e.dataTransfer.files;
                 if (files.length > 0) {
                     displayImage(files[0]);
                     return;
                 }
 
-                // Lấy hình ảnh từ URL (kéo từ web, word...)
                 const html = e.dataTransfer.getData('text/html');
                 const text = e.dataTransfer.getData('text/plain');
                 
-                // Thử lấy src từ HTML
                 if (html) {
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = html;
                     const img = tempDiv.querySelector('img');
                     if (img && img.src) {
-                        // Nếu là base64 hoặc URL trực tiếp
                         if (img.src.startsWith('data:image') || img.src.startsWith('http')) {
                             showImage(img.src);
                             return;
@@ -780,7 +868,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                     }
                 }
                 
-                // Thử lấy URL từ text
                 if (text && (text.startsWith('http') || text.startsWith('data:image'))) {
                     showImage(text);
                     return;
@@ -789,7 +876,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 showToast('⚠️ Không thể nhận diện hình ảnh từ nguồn này');
             });
 
-            // Dán hình từ clipboard (Ctrl+V)
             document.addEventListener('paste', function(e) {
                 const items = e.clipboardData?.items;
                 if (!items) return;
@@ -804,7 +890,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 }
             });
 
-            // Gỡ hình
             function removeImage() {
                 previewImage.style.display = 'none';
                 previewImage.src = '#';
