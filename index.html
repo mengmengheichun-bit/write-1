@@ -316,7 +316,7 @@
           <label class="btn btn-light" for="jsonInput">📥 Nhập JSON</label>
           <input id="jsonInput" type="file" accept="application/json,.json">
         </div>
-        <div class="collection-title">📚 Bộ đề đã lưu (<span id="savedCount">0</span>)</div>
+        <div class="collection-title">📚 Bài đã lưu (<span id="savedCount">0</span>)</div>
         <div class="saved-list" id="savedList"></div>
       </div>
     </section>
@@ -372,6 +372,7 @@
         chartButtons.forEach(button => {
           button.classList.toggle('active', button.dataset.chart === currentChartType);
         });
+        renderSavedQuestions();
       }
 
       function showImage(src) {
@@ -484,17 +485,28 @@
 
       function renderSavedQuestions() {
         savedList.replaceChildren();
-        savedCount.textContent = savedQuestions.length;
 
-        if (!savedQuestions.length) {
+        const visibleQuestions = savedQuestions
+          .map((item, originalIndex) => ({ item, originalIndex }))
+          .filter(({ item }) => {
+            return !currentChartType || item.chartType === currentChartType;
+          });
+
+        savedCount.textContent = currentChartType
+          ? `${visibleQuestions.length}/${savedQuestions.length}`
+          : savedQuestions.length;
+
+        if (!visibleQuestions.length) {
           const empty = document.createElement('div');
           empty.className = 'empty';
-          empty.textContent = 'Chưa có đề nào';
+          empty.textContent = currentChartType
+            ? `Chưa có bài ${currentChartType}. Bấm lại tab để xem tất cả.`
+            : 'Chưa có bài nào';
           savedList.appendChild(empty);
           return;
         }
 
-        savedQuestions.forEach((item, index) => {
+        visibleQuestions.forEach(({ item, originalIndex }) => {
           const row = document.createElement('div');
           row.className = 'saved-item';
           row.title = 'Bấm để mở đề';
@@ -511,7 +523,7 @@
           remove.addEventListener('click', event => {
             event.stopPropagation();
             const oldItems = [...savedQuestions];
-            savedQuestions.splice(index, 1);
+            savedQuestions.splice(originalIndex, 1);
             if (!persistQuestions()) savedQuestions = oldItems;
             else notify('Đã xóa đề.');
           });
@@ -524,6 +536,8 @@
 
       function loadQuestion(item) {
         questionInput.value = item.question || '';
+        essayInput.value = item.essay || '';
+        updateWordCount();
         selectChart(item.chartType || '');
         if (item.image) showImage(item.image);
         else removeCurrentImage(false);
@@ -532,9 +546,10 @@
 
       function addCurrentQuestion() {
         const question = questionInput.value.trim();
+        const essay = essayInput.value.trim();
         const image = previewImage.getAttribute('src') || '';
-        if (!question && !image) {
-          notify('⚠️ Hãy nhập đề bài hoặc thêm hình trước.');
+        if (!question && !image && !essay) {
+          notify('⚠️ Hãy nhập đề, thêm hình hoặc viết bài trước.');
           return;
         }
 
@@ -543,6 +558,7 @@
           question: question || 'Chưa có đề bài',
           chartType: currentChartType || 'unknown',
           image,
+          essay,
           createdAt: new Date().toISOString()
         });
         if (!persistQuestions()) savedQuestions = oldItems;
@@ -586,7 +602,10 @@
       }
 
       chartButtons.forEach(button => {
-        button.addEventListener('click', () => selectChart(button.dataset.chart));
+        button.addEventListener('click', () => {
+          const clickedType = button.dataset.chart;
+          selectChart(currentChartType === clickedType ? '' : clickedType);
+        });
       });
 
       essayInput.addEventListener('input', updateWordCount);
