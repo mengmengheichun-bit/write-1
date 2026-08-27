@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Writing Task 1 - Luyện viết + Lưu bộ đề</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            height: 90vh;
+            display: flex;
+            gap: 20px;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* ========== LEFT PANEL ========== */
+        .left-panel {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        /* Phân loại biểu đồ */
+        .chart-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #f8f9fc;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid #e0e5ec;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .chart-types-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.85rem;
+            margin-right: 6px;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chart-type-btn {
+            background: white;
+            border: 1.5px solid #d1d9e6;
+            color: #4b5563;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+
+        .chart-type-btn:hover {
+            border-color: #4f8cff;
+            color: #4f8cff;
+            background: #f0f6ff;
+            transform: translateY(-1px);
+        }
+
+        .chart-type-btn.active {
+            background: #4f8cff;
+            border-color: #4f8cff;
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 140, 255, 0.3);
+        }
+
+        .question-box {
+            background: #f8f9fc;
+            border: 2px solid #e0e5ec;
+            border-radius: 16px;
+            padding: 16px 18px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .question-box:focus-within {
+            border-color: #4f8cff;
+            box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.15);
+        }
+
+        .question-box label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+        }
+
+        .question-box label i {
+            font-style: normal;
+            font-size: 1.2rem;
+        }
+
+        .question-box textarea {
+            width: 100%;
+            min-height: 80px;
+            max-height: 160px;
+            resize: vertical;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #2c3e50;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .question-box textarea::placeholder {
+            color: #9aa5b5;
+            font-style: italic;
+        }
+
+        .writing-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            border: 2px solid #e0e5ec;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            min-height: 0;
+        }
+
+        .writing-area:focus-within {
+            border-color: #4f8cff;
+            box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.15);
+        }
+
+        .writing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            background: #f8f9fc;
+            border-bottom: 1px solid #e0e5ec;
+            flex-shrink: 0;
+        }
+
+        .writing-header .title {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.95rem;
+        }
+
+        .word-count {
+            font-size: 0.85rem;
+            color: #6b7a8d;
+            background: #eef2f7;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .word-count span {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .writing-area textarea {
+            flex: 1;
+            width: 100%;
+            border: none;
+            resize: none;
+            padding: 18px 20px;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #2c3e50;
+            outline: none;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #ffffff;
+            min-height: 0;
+        }
+
+        .writing-area textarea::placeholder {
+            color: #b0b8c5;
+            font-style: italic;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+            padding: 12px 16px;
+            border-top: 1px solid #e0e5ec;
+            background: #fafbfc;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary {
+            background: #4f8cff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #3b7ae0;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(79, 140, 255, 0.35);
+        }
+
+        .btn-outline {
+            background: white;
+            color: #4f8cff;
+            border: 2px solid #4f8cff;
+        }
+        .btn-outline:hover {
+            background: #f0f6ff;
+        }
+
+        .btn-ghost {
+            background: #f0f2f5;
+            color: #4b5563;
+        }
+        .btn-ghost:hover {
+            background: #e2e6ec;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
+        }
+
+        /* ========== RIGHT PANEL ========== */
+        .right-panel {
+            flex: 0.8;
+            background: #f8f9fc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 280px;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        .right-panel.dragover {
+            border-color: #4f8cff;
+            background: #edf3ff;
+        }
+
+        .upload-header {
+            padding: 16px 18px 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .image-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            position: relative;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .image-placeholder {
+            text-align: center;
+            color: #9aa5b5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .image-placeholder .icon {
+            font-size: 3.5rem;
+            opacity: 0.6;
+        }
+
+        .image-placeholder p {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .image-placeholder small {
+            font-size: 0.8rem;
+            color: #b0b8c5;
+        }
+
+        #previewImage {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            display: none;
+        }
+
+        .upload-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 12px 16px 16px;
+            flex-shrink: 0;
+            justify-content: center;
+        }
+
+        .file-input-label {
+            padding: 10px 18px;
+            background: white;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .file-input-label:hover {
+            border-color: #4f8cff;
+            color: #4f8cff;
+            background: #f8faff;
+        }
+
+        .btn-remove {
+            padding: 10px 16px;
+            background: #fff0f0;
+            border: 2px solid #fca5a5;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #dc2626;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-remove:hover {
+            background: #fee2e2;
+        }
+
+        #fileInput,
+        #jsonInput {
+            display: none;
+        }
+
+        /* Danh sách bộ đề đã lưu */
+        .saved-questions-container {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e0e5ec;
+            padding: 10px;
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        .saved-question-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: #f8fafc;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            gap: 10px;
+        }
+
+        .saved-question-item:hover {
+            background: #eef2f7;
+        }
+
+        .saved-question-item .info {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .saved-question-item .delete-btn {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .saved-question-item .delete-btn:hover {
+            background: #fee2e2;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s, transform 0.4s;
+            z-index: 1000;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+                min-height: 90vh;
+                padding: 16px;
+                gap: 14px;
+            }
+            .left-panel,
+            .right-panel {
+                flex: unset;
+                width: 100%;
+            }
+            .right-panel {
+                min-height: 300px;
+            }
+            .writing-area textarea {
+                min-height: 250px;
+            }
+            .chart-types {
+                gap: 6px;
+            }
+            .chart-type-btn {
+                padding: 5px 10px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- LEFT: Phân loại + Đề bài + Bài viết -->
+        <div class="left-panel">
+            <!-- Phân loại biểu đồ -->
+            <div class="chart-types">
+                <span class="chart-types-label">📊 Loại biểu đồ:</span>
+                <button class="chart-type-btn" data-chart="line">📈 Line</button>
+                <button class="chart-type-btn" data-chart="pie">🥧 Pie</button>
+                <button class="chart-type-btn" data-chart="bar">📊 Bar</button>
+                <button class="chart-type-btn" data-chart="mix">🔀 Mix</button>
+                <button class="chart-type-btn" data-chart="map">🗺️ Map</button>
+                <button class="chart-type-btn" data-chart="process">⚙️ Process</button>
+            </div>
+
+            <!-- Khung nhập đề bài -->
+            <div class="question-box">
+                <label><i>📋</i> Đề bài (Writing Task 1)</label>
+                <textarea id="questionInput" placeholder="Nhập đề bài tại đây..."></textarea>
+            </div>
+
+            <!-- Khu vực viết bài -->
+            <div class="writing-area">
+                <div class="writing-header">
+                    <span class="title">✍️ Bài viết của bạn</span>
+                    <div class="word-count"><span id="wordCount">0</span> từ</div>
+                </div>
+                <textarea id="essayInput" placeholder="Viết bài phân tích biểu đồ của bạn tại đây..."></textarea>
+                <div class="button-group">
+                    <button class="btn btn-primary" id="saveBtn">💾 Lưu bài .txt</button>
+                    <button class="btn btn-outline" id="clearBtn">🗑️ Xóa bài viết</button>
+                    <button class="btn btn-ghost" id="sampleBtn">📄 Điền mẫu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Upload hình biểu đồ + quản lý bộ đề -->
+        <div class="right-panel" id="dropZone">
+            <div class="upload-header">
+                <span>🖼️ Biểu đồ / Hình ảnh</span>
+            </div>
+            <div class="image-container">
+                <div class="image-placeholder" id="placeholder">
+                    <div class="icon">📈</div>
+                    <p>Kéo thả hình vào đây</p>
+                    <small>hoặc nhấn nút bên dưới để chọn file</small>
+                </div>
+                <img id="previewImage" src="#" alt="Biểu đồ xem trước">
+            </div>
+            <div class="upload-actions">
+                <label class="file-input-label" for="fileInput">
+                    📁 Chọn hình
+                </label>
+                <input type="file" id="fileInput" accept="image/*">
+                <button class="btn-remove" id="removeImageBtn">✖ Gỡ hình</button>
+            </div>
+
+            <!-- Quản lý bộ đề (lưu hình + đề) -->
+            <div style="padding: 0 16px 8px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                <button class="btn btn-success" id="addToCollectionBtn">➕ Thêm vào bộ đề</button>
+                <button class="btn btn-ghost" id="exportJsonBtn">📤 Xuất JSON</button>
+                <label class="btn btn-outline" for="jsonInput" style="cursor: pointer;">📥 Nhập JSON</label>
+                <input type="file" id="jsonInput" accept=".json">
+            </div>
+
+            <!-- Danh sách đề đã lưu -->
+            <div style="padding: 0 16px 12px; flex: 1; display: flex; flex-direction: column; min-height: 0;">
+                <div style="font-weight: 600; font-size: 0.85rem; color: #2c3e50; margin-bottom: 6px;">📚 Bộ đề đã lưu (<span id="savedCount">0</span>)</div>
+                <div class="saved-questions-container" id="savedList">
+                    <!-- Danh sách sẽ được render bằng JS -->
+                    <div style="color: #9aa5b5; text-align: center; padding: 10px; font-size: 0.85rem;">Chưa có đề nào</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast thông báo -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            // DOM elements
+            const questionInput = document.getElementById('questionInput');
+            const essayInput = document.getElementById('essayInput');
+            const wordCountSpan = document.getElementById('wordCount');
+            const saveBtn = document.getElementById('saveBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const sampleBtn = document.getElementById('sampleBtn');
+            const fileInput = document.getElementById('fileInput');
+            const previewImage = document.getElementById('previewImage');
+            const placeholder = document.getElementById('placeholder');
+            const dropZone = document.getElementById('dropZone');
+            const removeImageBtn = document.getElementById('removeImageBtn');
+            const toast = document.getElementById('toast');
+            const chartTypeButtons = document.querySelectorAll('.chart-type-btn');
+            const addToCollectionBtn = document.getElementById('addToCollectionBtn');
+            const exportJsonBtn = document.getElementById('exportJsonBtn');
+            const jsonInput = document.getElementById('jsonInput');
+            const savedList = document.getElementById('savedList');
+            const savedCountSpan = document.getElementById('savedCount');
+
+            // Biến lưu loại chart hiện tại
+            let currentChartType = '';
+            // Mảng lưu bộ đề (hình ảnh base64, đề bài, loại chart)
+            let savedQuestions = [];
+
+            // ========== XỬ LÝ CHỌN LOẠI BIỂU ĐỒ ==========
+            chartTypeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    chartTypeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentChartType = this.getAttribute('data-chart');
+                });
+            });
+
+            // ========== ĐẾM TỪ ==========
+            function updateWordCount() {
+                const text = essayInput.value.trim();
+                const words = text.length === 0 ? 0 : text.split(/\s+/).filter(w => w.length > 0).length;
+                wordCountSpan.textContent = words;
+            }
+
+            essayInput.addEventListener('input', updateWordCount);
+
+            // ========== LƯU BÀI (Download .txt) ==========
+            function saveEssay() {
+                const question = questionInput.value.trim() || 'Không có đề bài';
+                const essay = essayInput.value.trim();
+                if (!essay) {
+                    showToast('⚠️ Bạn chưa viết gì để lưu!');
+                    return;
+                }
+                const chartType = currentChartType ? `Loại biểu đồ: ${currentChartType}` : 'Loại biểu đồ: Chưa chọn';
+                const content = `${chartType}\n\nĐỀ BÀI:\n${question}\n\nBÀI VIẾT:\n${essay}\n\n---\nSố từ: ${wordCountSpan.textContent}`;
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'ielts-writing-task1.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('✅ Đã lưu bài viết thành công!');
+            }
+
+            saveBtn.addEventListener('click', saveEssay);
+
+            // ========== XÓA BÀI VIẾT ==========
+            function clearEssay() {
+                essayInput.value = '';
+                updateWordCount();
+                showToast('🗑️ Đã xóa nội dung bài viết');
+            }
+
+            clearBtn.addEventListener('click', clearEssay);
+
+            // ========== ĐIỀN MẪU ==========
+            function fillSample() {
+                const sampleQuestion = 'The chart below shows the percentage of households in owned and rented accommodation in England and Wales between 1918 and 2011.';
+                const sampleEssay = `The bar chart illustrates the proportion of households living in owned and rented accommodation in England and Wales over a period of 93 years, from 1918 to 2011.
+
+Overall, there was a significant shift from renting to owning during the first half of the period, while the trend reversed in the later years.
+
+In 1918, around 78% of households rented their accommodation, while only 22% owned their homes. Over the following decades, the percentage of renters decreased steadily, reaching approximately 50% by 1971. Meanwhile, the ownership rate rose correspondingly, surpassing renting for the first time around 1971.
+
+From 1971 onwards, the percentage of households owning their homes continued to increase, peaking at about 69% in 2001. After that, it declined slightly to 64% by 2011. In contrast, the proportion of renters fell to a low of 31% in 2001, then rose again to 36% by 2011.
+
+In conclusion, the data shows a clear long-term trend towards home ownership until the early 2000s, followed by a modest resurgence in renting by 2011.`;
+
+                questionInput.value = sampleQuestion;
+                essayInput.value = sampleEssay;
+                updateWordCount();
+
+                chartTypeButtons.forEach(btn => {
+                    if (btn.getAttribute('data-chart') === 'bar') {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                currentChartType = 'bar';
+                showToast('📄 Đã điền đề, bài viết mẫu (Bar chart)');
+            }
+
+            sampleBtn.addEventListener('click', fillSample);
+
+            // ========== XỬ LÝ HÌNH ẢNH ==========
+            function displayImage(file) {
+                if (!file || !file.type.startsWith('image/')) {
+                    showToast('⚠️ Vui lòng chọn file hình ảnh hợp lệ!');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    showToast('🖼️ Đã tải hình biểu đồ lên!');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    displayImage(e.target.files[0]);
+                }
+                fileInput.value = '';
+            });
+
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    displayImage(files[0]);
+                }
+            });
+
+            function removeImage() {
+                previewImage.style.display = 'none';
+                previewImage.src = '#';
+                placeholder.style.display = 'flex';
+                showToast('🖼️ Đã gỡ hình biểu đồ');
+            }
+
+            removeImageBtn.addEventListener('click', removeImage);
+
+            // ========== QUẢN LÝ BỘ ĐỀ (JSON) ==========
+            // Hàm lấy dữ liệu hiện tại (ảnh + đề + loại chart)
+            function getCurrentData() {
+                const question = questionInput.value.trim();
+                const hasImage = previewImage.style.display === 'block' && previewImage.src && previewImage.src !== '#';
+                const imageData = hasImage ? previewImage.src : '';
+                return {
+                    question: question || 'Chưa có đề bài',
+                    chartType: currentChartType || 'unknown',
+                    image: imageData,
+                    timestamp: new Date().toISOString()
+                };
+            }
+
+            // Lưu bộ đề vào localStorage
+            function persistSavedQuestions() {
+                localStorage.setItem('ielts_saved_questions', JSON.stringify(savedQuestions));
+                renderSavedList();
+            }
+
+            // Hiển thị danh sách đề đã lưu
+            function renderSavedList() {
+                const container = savedList;
+                container.innerHTML = '';
+                savedCountSpan.textContent = savedQuestions.length;
+
+                if (savedQuestions.length === 0) {
+                    container.innerHTML = '<div style="color: #9aa5b5; text-align: center; padding: 10px; font-size: 0.85rem;">Chưa có đề nào</div>';
+                    return;
+                }
+
+                savedQuestions.forEach((q, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'saved-question-item';
+                    item.innerHTML = `
+                        <div class="info">${q.chartType} | ${q.question.substring(0, 40)}${q.question.length > 40 ? '...' : ''}</div>
+                        <button class="delete-btn" data-index="${index}" title="Xóa đề này">✖</button>
+                    `;
+                    // Click vào item để tải lại đề
+                    item.addEventListener('click', function(e) {
+                        if (e.target.classList.contains('delete-btn')) return;
+                        loadQuestionToForm(q);
+                    });
+                    // Nút xóa riêng
+                    item.querySelector('.delete-btn').addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        savedQuestions.splice(index, 1);
+                        persistSavedQuestions();
+                        showToast('🗑️ Đã xóa đề khỏi bộ sưu tập');
+                    });
+                    container.appendChild(item);
+                });
+            }
+
+            // Tải đề từ bộ sưu tập vào form
+            function loadQuestionToForm(q) {
+                questionInput.value = q.question || '';
+                currentChartType = q.chartType || '';
+                chartTypeButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.getAttribute('data-chart') === currentChartType);
+                });
+                if (q.image) {
+                    previewImage.src = q.image;
+                    previewImage.style.display = 'block';
+                    placeholder.style.display = 'none';
+                } else {
+                    previewImage.style.display = 'none';
+                    previewImage.src = '#';
+                    placeholder.style.display = 'flex';
+                }
+                showToast('📂 Đã tải đề vào form');
+            }
+
+            // Thêm đề hiện tại vào bộ sưu tập
+            function addToCollection() {
+                const data = getCurrentData();
+                // Kiểm tra nếu chưa có hình hoặc đề thì vẫn cho thêm (có thể chỉ có đề)
+                if (!data.question && !data.image) {
+                    showToast('⚠️ Chưa có đề bài hoặc hình ảnh để lưu!');
+                    return;
+                }
+                savedQuestions.push(data);
+                persistSavedQuestions();
+                showToast('✅ Đã thêm vào bộ đề!');
+            }
+
+            // Xuất JSON
+            function exportJson() {
+                if (savedQuestions.length === 0) {
+                    showToast('⚠️ Bộ đề trống, hãy thêm đề trước khi xuất!');
+                    return;
+                }
+                const jsonStr = JSON.stringify(savedQuestions, null, 2);
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'ielts-questions.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('📤 Đã xuất file JSON thành công!');
+            }
+
+            // Nhập JSON
+            function importJson(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (!Array.isArray(data)) {
+                            throw new Error('File JSON không đúng định dạng (cần là mảng các đề)');
+                        }
+                        savedQuestions = data;
+                        persistSavedQuestions();
+                        showToast('📥 Đã nhập bộ đề từ JSON!');
+                    } catch (err) {
+                        showToast('❌ Lỗi: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            // Khôi phục bộ đề từ localStorage khi tải trang
+            function loadSavedFromLocalStorage() {
+                const saved = localStorage.getItem('ielts_saved_questions');
+                if (saved) {
+                    try {
+                        savedQuestions = JSON.parse(saved);
+                    } catch (e) {
+                        savedQuestions = [];
+                    }
+                }
+                renderSavedList();
+            }
+
+            // Gắn sự kiện
+            addToCollectionBtn.addEventListener('click', addToCollection);
+            exportJsonBtn.addEventListener('click', exportJson);
+            jsonInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    importJson(e.target.files[0]);
+                }
+                jsonInput.value = '';
+            });
+
+            // ========== TOAST ==========
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                clearTimeout(toast._timeout);
+                toast._timeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            }
+
+            // ========== PHÍM TẮT ==========
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    saveEssay();
+                }
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    saveEssay();
+                }
+            });
+
+            // Khởi tạo
+            updateWordCount();
+            loadSavedFromLocalStorage();
+        })();
+    </script>
+</body>
+</html>
