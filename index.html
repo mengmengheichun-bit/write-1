@@ -43,7 +43,6 @@
             min-width: 0;
         }
 
-        /* Phân loại biểu đồ */
         .chart-types {
             display: flex;
             flex-wrap: wrap;
@@ -281,12 +280,38 @@
             flex-direction: column;
             overflow: hidden;
             min-width: 280px;
-            transition: border-color 0.3s, background 0.3s;
+            transition: border-color 0.3s, background 0.3s, transform 0.2s;
+            position: relative;
         }
 
         .right-panel.dragover {
             border-color: #4f8cff;
             background: #edf3ff;
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(79, 140, 255, 0.3);
+        }
+
+        .right-panel.dragover::after {
+            content: '📥 Thả hình vào đây!';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4f8cff;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            pointer-events: none;
+            animation: pulse 0.8s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
         }
 
         .upload-header {
@@ -399,7 +424,6 @@
             display: none;
         }
 
-        /* Danh sách bộ đề đã lưu */
         .saved-questions-container {
             max-height: 200px;
             overflow-y: auto;
@@ -452,7 +476,6 @@
             background: #fee2e2;
         }
 
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -475,7 +498,6 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* Responsive */
         @media (max-width: 900px) {
             .container {
                 flex-direction: column;
@@ -510,7 +532,6 @@
     <div class="container">
         <!-- LEFT: Phân loại + Đề bài + Bài viết -->
         <div class="left-panel">
-            <!-- Phân loại biểu đồ -->
             <div class="chart-types">
                 <span class="chart-types-label">📊 Loại biểu đồ:</span>
                 <button class="chart-type-btn" data-chart="line">📈 Line</button>
@@ -521,13 +542,11 @@
                 <button class="chart-type-btn" data-chart="process">⚙️ Process</button>
             </div>
 
-            <!-- Khung nhập đề bài -->
             <div class="question-box">
                 <label><i>📋</i> Đề bài (Writing Task 1)</label>
                 <textarea id="questionInput" placeholder="Nhập đề bài tại đây..."></textarea>
             </div>
 
-            <!-- Khu vực viết bài -->
             <div class="writing-area">
                 <div class="writing-header">
                     <span class="title">✍️ Bài viết của bạn</span>
@@ -551,7 +570,7 @@
                 <div class="image-placeholder" id="placeholder">
                     <div class="icon">📈</div>
                     <p>Kéo thả hình vào đây</p>
-                    <small>hoặc nhấn nút bên dưới để chọn file</small>
+                    <small>hoặc dán từ clipboard (Ctrl+V)</small>
                 </div>
                 <img id="previewImage" src="#" alt="Biểu đồ xem trước">
             </div>
@@ -563,7 +582,6 @@
                 <button class="btn-remove" id="removeImageBtn">✖ Gỡ hình</button>
             </div>
 
-            <!-- Quản lý bộ đề (lưu hình + đề) -->
             <div style="padding: 0 16px 8px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
                 <button class="btn btn-success" id="addToCollectionBtn">➕ Thêm vào bộ đề</button>
                 <button class="btn btn-ghost" id="exportJsonBtn">📤 Xuất JSON</button>
@@ -571,18 +589,15 @@
                 <input type="file" id="jsonInput" accept=".json">
             </div>
 
-            <!-- Danh sách đề đã lưu -->
             <div style="padding: 0 16px 12px; flex: 1; display: flex; flex-direction: column; min-height: 0;">
                 <div style="font-weight: 600; font-size: 0.85rem; color: #2c3e50; margin-bottom: 6px;">📚 Bộ đề đã lưu (<span id="savedCount">0</span>)</div>
                 <div class="saved-questions-container" id="savedList">
-                    <!-- Danh sách sẽ được render bằng JS -->
                     <div style="color: #9aa5b5; text-align: center; padding: 10px; font-size: 0.85rem;">Chưa có đề nào</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast thông báo -->
     <div class="toast" id="toast"></div>
 
     <script>
@@ -607,9 +622,7 @@
             const savedList = document.getElementById('savedList');
             const savedCountSpan = document.getElementById('savedCount');
 
-            // Biến lưu loại chart hiện tại
             let currentChartType = '';
-            // Mảng lưu bộ đề (hình ảnh base64, đề bài, loại chart)
             let savedQuestions = [];
 
             // ========== XỬ LÝ CHỌN LOẠI BIỂU ĐỒ ==========
@@ -630,7 +643,7 @@
 
             essayInput.addEventListener('input', updateWordCount);
 
-            // ========== LƯU BÀI (Download .txt) ==========
+            // ========== LƯU BÀI .TXT ==========
             function saveEssay() {
                 const question = questionInput.value.trim() || 'Không có đề bài';
                 const essay = essayInput.value.trim();
@@ -693,22 +706,30 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
 
             sampleBtn.addEventListener('click', fillSample);
 
-            // ========== XỬ LÝ HÌNH ẢNH ==========
+            // ========== XỬ LÝ HÌNH ẢNH (CẢI TIẾN) ==========
             function displayImage(file) {
-                if (!file || !file.type.startsWith('image/')) {
-                    showToast('⚠️ Vui lòng chọn file hình ảnh hợp lệ!');
-                    return;
+                if (!file) return;
+                
+                // Kiểm tra nếu là file hình ảnh
+                if (file.type && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        showImage(e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    showToast('⚠️ File không phải là hình ảnh!');
                 }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewImage.style.display = 'block';
-                    placeholder.style.display = 'none';
-                    showToast('🖼️ Đã tải hình biểu đồ lên!');
-                };
-                reader.readAsDataURL(file);
             }
 
+            function showImage(src) {
+                previewImage.src = src;
+                previewImage.style.display = 'block';
+                placeholder.style.display = 'none';
+                showToast('🖼️ Đã tải hình biểu đồ lên!');
+            }
+
+            // Khi chọn file từ input
             fileInput.addEventListener('change', function(e) {
                 if (e.target.files.length > 0) {
                     displayImage(e.target.files[0]);
@@ -716,25 +737,74 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 fileInput.value = '';
             });
 
+            // Kéo thả file từ máy tính
             dropZone.addEventListener('dragover', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 dropZone.classList.add('dragover');
             });
 
             dropZone.addEventListener('dragleave', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 dropZone.classList.remove('dragover');
             });
 
             dropZone.addEventListener('drop', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 dropZone.classList.remove('dragover');
+
+                // Lấy file từ drop
                 const files = e.dataTransfer.files;
                 if (files.length > 0) {
                     displayImage(files[0]);
+                    return;
+                }
+
+                // Lấy hình ảnh từ URL (kéo từ web, word...)
+                const html = e.dataTransfer.getData('text/html');
+                const text = e.dataTransfer.getData('text/plain');
+                
+                // Thử lấy src từ HTML
+                if (html) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    const img = tempDiv.querySelector('img');
+                    if (img && img.src) {
+                        // Nếu là base64 hoặc URL trực tiếp
+                        if (img.src.startsWith('data:image') || img.src.startsWith('http')) {
+                            showImage(img.src);
+                            return;
+                        }
+                    }
+                }
+                
+                // Thử lấy URL từ text
+                if (text && (text.startsWith('http') || text.startsWith('data:image'))) {
+                    showImage(text);
+                    return;
+                }
+
+                showToast('⚠️ Không thể nhận diện hình ảnh từ nguồn này');
+            });
+
+            // Dán hình từ clipboard (Ctrl+V)
+            document.addEventListener('paste', function(e) {
+                const items = e.clipboardData?.items;
+                if (!items) return;
+
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.startsWith('image/')) {
+                        const blob = items[i].getAsFile();
+                        displayImage(blob);
+                        e.preventDefault();
+                        break;
+                    }
                 }
             });
 
+            // Gỡ hình
             function removeImage() {
                 previewImage.style.display = 'none';
                 previewImage.src = '#';
@@ -744,8 +814,7 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
 
             removeImageBtn.addEventListener('click', removeImage);
 
-            // ========== QUẢN LÝ BỘ ĐỀ (JSON) ==========
-            // Hàm lấy dữ liệu hiện tại (ảnh + đề + loại chart)
+            // ========== QUẢN LÝ BỘ ĐỀ ==========
             function getCurrentData() {
                 const question = questionInput.value.trim();
                 const hasImage = previewImage.style.display === 'block' && previewImage.src && previewImage.src !== '#';
@@ -758,13 +827,11 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 };
             }
 
-            // Lưu bộ đề vào localStorage
             function persistSavedQuestions() {
                 localStorage.setItem('ielts_saved_questions', JSON.stringify(savedQuestions));
                 renderSavedList();
             }
 
-            // Hiển thị danh sách đề đã lưu
             function renderSavedList() {
                 const container = savedList;
                 container.innerHTML = '';
@@ -782,12 +849,10 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                         <div class="info">${q.chartType} | ${q.question.substring(0, 40)}${q.question.length > 40 ? '...' : ''}</div>
                         <button class="delete-btn" data-index="${index}" title="Xóa đề này">✖</button>
                     `;
-                    // Click vào item để tải lại đề
                     item.addEventListener('click', function(e) {
                         if (e.target.classList.contains('delete-btn')) return;
                         loadQuestionToForm(q);
                     });
-                    // Nút xóa riêng
                     item.querySelector('.delete-btn').addEventListener('click', function(e) {
                         e.stopPropagation();
                         savedQuestions.splice(index, 1);
@@ -798,7 +863,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 });
             }
 
-            // Tải đề từ bộ sưu tập vào form
             function loadQuestionToForm(q) {
                 questionInput.value = q.question || '';
                 currentChartType = q.chartType || '';
@@ -817,10 +881,8 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 showToast('📂 Đã tải đề vào form');
             }
 
-            // Thêm đề hiện tại vào bộ sưu tập
             function addToCollection() {
                 const data = getCurrentData();
-                // Kiểm tra nếu chưa có hình hoặc đề thì vẫn cho thêm (có thể chỉ có đề)
                 if (!data.question && !data.image) {
                     showToast('⚠️ Chưa có đề bài hoặc hình ảnh để lưu!');
                     return;
@@ -830,7 +892,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 showToast('✅ Đã thêm vào bộ đề!');
             }
 
-            // Xuất JSON
             function exportJson() {
                 if (savedQuestions.length === 0) {
                     showToast('⚠️ Bộ đề trống, hãy thêm đề trước khi xuất!');
@@ -849,7 +910,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 showToast('📤 Đã xuất file JSON thành công!');
             }
 
-            // Nhập JSON
             function importJson(file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -868,7 +928,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 reader.readAsText(file);
             }
 
-            // Khôi phục bộ đề từ localStorage khi tải trang
             function loadSavedFromLocalStorage() {
                 const saved = localStorage.getItem('ielts_saved_questions');
                 if (saved) {
@@ -881,7 +940,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 renderSavedList();
             }
 
-            // Gắn sự kiện
             addToCollectionBtn.addEventListener('click', addToCollection);
             exportJsonBtn.addEventListener('click', exportJson);
             jsonInput.addEventListener('change', function(e) {
