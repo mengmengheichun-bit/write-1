@@ -23,8 +23,8 @@
 
         .container {
             width: 100%;
-            max-width: 1400px;
-            height: 90vh;
+            max-width: 1600px;
+            height: 95vh;
             display: flex;
             gap: 20px;
             background: #ffffff;
@@ -36,7 +36,7 @@
 
         /* ========== LEFT PANEL ========== */
         .left-panel {
-            flex: 1.2;
+            flex: 0.9;
             display: flex;
             flex-direction: column;
             gap: 14px;
@@ -224,6 +224,7 @@
             background: #ffffff;
             min-height: 0;
             transition: font-size 0.2s;
+            font-size: 18px;
         }
 
         .writing-area textarea::placeholder {
@@ -292,16 +293,16 @@
             box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
         }
 
-        /* ========== RIGHT PANEL ========== */
+        /* ========== RIGHT PANEL - MỞ RỘNG ========== */
         .right-panel {
-            flex: 0.8;
+            flex: 1.1;
             background: #f8f9fc;
             border: 2px dashed #cbd5e1;
             border-radius: 16px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            min-width: 280px;
+            min-width: 400px;
             transition: border-color 0.3s, background 0.3s, transform 0.2s;
             position: relative;
         }
@@ -358,14 +359,14 @@
         }
 
         .image-size-control input[type="range"] {
-            width: 80px;
+            width: 100px;
             cursor: pointer;
         }
 
         .image-size-control span {
             font-weight: 600;
             color: #2c3e50;
-            min-width: 30px;
+            min-width: 35px;
             text-align: center;
         }
 
@@ -375,7 +376,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 20px;
             position: relative;
             min-height: 0;
             overflow: auto;
@@ -392,17 +393,17 @@
         }
 
         .image-placeholder .icon {
-            font-size: 3.5rem;
+            font-size: 4rem;
             opacity: 0.6;
         }
 
         .image-placeholder p {
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             font-weight: 500;
         }
 
         .image-placeholder small {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: #b0b8c5;
         }
 
@@ -412,8 +413,8 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
             display: none;
             transition: max-width 0.3s, max-height 0.3s;
-            max-width: 90%;
-            max-height: 90%;
+            max-width: 100%;
+            max-height: 100%;
         }
 
         .upload-actions {
@@ -543,6 +544,12 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        @media (max-width: 1200px) {
+            .right-panel {
+                min-width: 350px;
+            }
+        }
+
         @media (max-width: 900px) {
             .container {
                 flex-direction: column;
@@ -555,9 +562,10 @@
             .right-panel {
                 flex: unset;
                 width: 100%;
+                min-width: unset;
             }
             .right-panel {
-                min-height: 300px;
+                min-height: 400px;
             }
             .writing-area textarea {
                 min-height: 250px;
@@ -617,8 +625,8 @@
                 <span>🖼️ Biểu đồ / Hình ảnh</span>
                 <div class="image-size-control">
                     <span>🔍 Kích thước:</span>
-                    <input type="range" id="imageSizeSlider" min="30" max="100" value="90" step="1">
-                    <span id="imageSizeValue">90%</span>
+                    <input type="range" id="imageSizeSlider" min="30" max="100" value="100" step="1">
+                    <span id="imageSizeValue">100%</span>
                 </div>
             </div>
             <div class="image-container">
@@ -698,11 +706,9 @@
                 const size = this.value;
                 essayInput.style.fontSize = size + 'px';
                 fontSizeValue.textContent = size + 'px';
-                // Lưu tùy chọn
                 localStorage.setItem('ielts_font_size', size);
             });
 
-            // Khôi phục cỡ chữ đã lưu
             const savedFontSize = localStorage.getItem('ielts_font_size');
             if (savedFontSize) {
                 fontSizeSlider.value = savedFontSize;
@@ -716,11 +722,9 @@
                 previewImage.style.maxWidth = size + '%';
                 previewImage.style.maxHeight = size + '%';
                 imageSizeValue.textContent = size + '%';
-                // Lưu tùy chọn
                 localStorage.setItem('ielts_image_size', size);
             });
 
-            // Khôi phục kích thước hình đã lưu
             const savedImageSize = localStorage.getItem('ielts_image_size');
             if (savedImageSize) {
                 imageSizeSlider.value = savedImageSize;
@@ -989,77 +993,4 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 a.href = url;
                 a.download = 'ielts-questions.json';
                 document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showToast('📤 Đã xuất file JSON thành công!');
-            }
-
-            function importJson(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = JSON.parse(e.target.result);
-                        if (!Array.isArray(data)) {
-                            throw new Error('File JSON không đúng định dạng (cần là mảng các đề)');
-                        }
-                        savedQuestions = data;
-                        persistSavedQuestions();
-                        showToast('📥 Đã nhập bộ đề từ JSON!');
-                    } catch (err) {
-                        showToast('❌ Lỗi: ' + err.message);
-                    }
-                };
-                reader.readAsText(file);
-            }
-
-            function loadSavedFromLocalStorage() {
-                const saved = localStorage.getItem('ielts_saved_questions');
-                if (saved) {
-                    try {
-                        savedQuestions = JSON.parse(saved);
-                    } catch (e) {
-                        savedQuestions = [];
-                    }
-                }
-                renderSavedList();
-            }
-
-            addToCollectionBtn.addEventListener('click', addToCollection);
-            exportJsonBtn.addEventListener('click', exportJson);
-            jsonInput.addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    importJson(e.target.files[0]);
-                }
-                jsonInput.value = '';
-            });
-
-            // ========== TOAST ==========
-            function showToast(message) {
-                toast.textContent = message;
-                toast.classList.add('show');
-                clearTimeout(toast._timeout);
-                toast._timeout = setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 2500);
-            }
-
-            // ========== PHÍM TẮT ==========
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-                    e.preventDefault();
-                    saveEssay();
-                }
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                    e.preventDefault();
-                    saveEssay();
-                }
-            });
-
-            // Khởi tạo
-            updateWordCount();
-            loadSavedFromLocalStorage();
-        })();
-    </script>
-</body>
-</html>
+               
