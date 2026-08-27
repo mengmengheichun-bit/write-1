@@ -1,1041 +1,688 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IELTS Writing Task 1 - Luyện viết + Lưu bộ đề</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IELTS Writing Task 1</title>
+  <style>
+    :root {
+      --blue: #4f7cff;
+      --blue-dark: #365fd6;
+      --green: #0f9f72;
+      --red: #dc4545;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --line: #dfe5ef;
+      --soft: #f6f8fc;
+      --white: #fff;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    * { box-sizing: border-box; }
 
-        .container {
-            width: 100%;
-            max-width: 1600px;
-            height: 95vh;
-            display: flex;
-            gap: 20px;
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            padding: 20px;
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 8px;
+      color: var(--ink);
+      background: #edf1f7;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
 
-        .left-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            min-width: 0;
-        }
+    button, textarea, input { font: inherit; }
+    button, label[for] { -webkit-tap-highlight-color: transparent; }
 
-        .chart-types {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            background: #f8f9fc;
-            padding: 10px 14px;
-            border-radius: 14px;
-            border: 1px solid #e0e5ec;
-            align-items: center;
-            flex-shrink: 0;
-        }
+    .app {
+      width: 100%;
+      min-height: calc(100vh - 16px);
+      margin: auto;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: minmax(520px, 0.8fr) minmax(620px, 1fr);
+      gap: 12px;
+      border-radius: 16px;
+      background: var(--white);
+      box-shadow: 0 20px 55px rgba(35, 48, 76, .12);
+    }
 
-        .chart-types-label {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.85rem;
-            margin-right: 6px;
-            letter-spacing: 0.3px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+    .column { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+    .card { border: 1px solid var(--line); border-radius: 15px; background: var(--white); }
 
-        .chart-type-btn {
-            background: white;
-            border: 1.5px solid #d1d9e6;
-            color: #4b5563;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-            letter-spacing: 0.3px;
-        }
+    .chart-types {
+      padding: 11px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      background: var(--soft);
+    }
 
-        .chart-type-btn:hover {
-            border-color: #4f8cff;
-            color: #4f8cff;
-            background: #f0f6ff;
-            transform: translateY(-1px);
-        }
+    .chart-types strong { margin-right: 3px; font-size: .9rem; }
 
-        .chart-type-btn.active {
-            background: #4f8cff;
-            border-color: #4f8cff;
-            color: white;
-            box-shadow: 0 4px 12px rgba(79, 140, 255, 0.3);
-        }
+    .chip {
+      padding: 7px 13px;
+      border: 1px solid #ced7e6;
+      border-radius: 999px;
+      color: #4b5563;
+      background: var(--white);
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-        .question-box {
-            background: #f8f9fc;
-            border: 2px solid #e0e5ec;
-            border-radius: 16px;
-            padding: 16px 18px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
+    .chip:hover, .chip.active { color: #fff; border-color: var(--blue); background: var(--blue); }
 
-        .question-box:focus-within {
-            border-color: #4f8cff;
-            box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.15);
-        }
+    .question { padding: 15px 17px; }
+    .label { display: block; margin-bottom: 8px; font-size: .92rem; font-weight: 750; }
 
-        .question-box label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-            letter-spacing: 0.3px;
-        }
+    textarea {
+      width: 100%;
+      color: var(--ink);
+      border: 0;
+      outline: 0;
+      resize: vertical;
+      background: transparent;
+      line-height: 1.65;
+    }
 
-        .question-box label i {
-            font-style: normal;
-            font-size: 1.2rem;
-        }
+    #questionInput { min-height: 76px; }
 
-        .question-box textarea {
-            width: 100%;
-            min-height: 80px;
-            max-height: 160px;
-            resize: vertical;
-            border: none;
-            background: transparent;
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #2c3e50;
-            outline: none;
-            font-family: inherit;
-        }
+    .writing {
+      flex: 1;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-        .question-box textarea::placeholder {
-            color: #9aa5b5;
-            font-style: italic;
-        }
+    .toolbar {
+      padding: 11px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      background: var(--soft);
+    }
 
-        .writing-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #ffffff;
-            border: 2px solid #e0e5ec;
-            border-radius: 16px;
-            overflow: hidden;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            min-height: 0;
-        }
+    .toolbar-title { font-weight: 750; font-size: .93rem; }
+    .control { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: .82rem; }
+    .control input { width: 90px; accent-color: var(--blue); }
+    .control output { min-width: 42px; color: var(--ink); font-weight: 750; text-align: right; }
+    .counter { padding: 5px 10px; border-radius: 999px; background: #e9eef7; font-size: .82rem; }
 
-        .writing-area:focus-within {
-            border-color: #4f8cff;
-            box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.15);
-        }
+    #essayInput {
+      flex: 1;
+      min-height: 300px;
+      padding: 18px;
+      resize: none;
+      font: 18px/1.8 Georgia, "Times New Roman", serif;
+    }
 
-        .writing-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 18px;
-            background: #f8f9fc;
-            border-bottom: 1px solid #e0e5ec;
-            flex-shrink: 0;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+    .actions {
+      padding: 11px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-top: 1px solid var(--line);
+      background: #fbfcfe;
+    }
 
-        .writing-header .title {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.95rem;
-        }
+    .btn {
+      padding: 9px 14px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      font-size: .86rem;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform .15s, background .15s;
+    }
 
-        .font-size-control {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            color: #6b7a8d;
-        }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { color: #fff; background: var(--blue); }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-success { color: #fff; background: var(--green); }
+    .btn-light { color: var(--ink); border-color: #ced7e6; background: #fff; }
+    .btn-danger { color: var(--red); border-color: #f1b4b4; background: #fff5f5; }
 
-        .font-size-control input[type="range"] {
-            width: 80px;
-            cursor: pointer;
-        }
+    .image-card {
+      flex: 1;
+      min-height: 470px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-        .font-size-control span {
-            font-weight: 600;
-            color: #2c3e50;
-            min-width: 30px;
-            text-align: center;
-        }
+    .image-card.dragover { border-color: var(--blue); box-shadow: inset 0 0 0 2px rgba(79, 124, 255, .18); }
 
-        .word-count {
-            font-size: 0.85rem;
-            color: #6b7a8d;
-            background: #eef2f7;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
+    .image-stage {
+      flex: 1;
+      min-height: 330px;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      position: relative;
+      background:
+        linear-gradient(45deg, #f8fafc 25%, transparent 25%),
+        linear-gradient(-45deg, #f8fafc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f8fafc 75%),
+        linear-gradient(-45deg, transparent 75%, #f8fafc 75%), #fff;
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+      cursor: pointer;
+    }
 
-        .word-count span {
-            font-weight: 700;
-            color: #2c3e50;
-        }
+    .placeholder { max-width: 360px; color: #8993a4; text-align: center; pointer-events: none; }
+    .placeholder-icon { margin-bottom: 8px; font-size: 3.7rem; }
+    .placeholder strong { display: block; margin-bottom: 7px; color: #556070; }
+    .placeholder small { line-height: 1.55; }
 
-        .writing-area textarea {
-            flex: 1;
-            width: 100%;
-            border: none;
-            resize: none;
-            padding: 18px 20px;
-            line-height: 1.8;
-            color: #2c3e50;
-            outline: none;
-            font-family: 'Georgia', 'Times New Roman', serif;
-            background: #ffffff;
-            min-height: 0;
-            transition: font-size 0.2s;
-            font-size: 18px;
-        }
+    #previewImage {
+      display: none;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      max-height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
 
-        .writing-area textarea::placeholder {
-            color: #b0b8c5;
-            font-style: italic;
-        }
+    #fileInput, #jsonInput { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
-        .button-group {
-            display: flex;
-            gap: 10px;
-            flex-shrink: 0;
-            padding: 12px 16px;
-            border-top: 1px solid #e0e5ec;
-            background: #fafbfc;
-            flex-wrap: wrap;
-        }
+    .image-actions { justify-content: center; }
 
-        .btn {
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.25s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            letter-spacing: 0.3px;
-        }
+    .collection { padding-bottom: 10px; overflow: hidden; }
+    .collection-title { padding: 12px 14px 5px; font-size: .88rem; font-weight: 750; }
+    .saved-list { max-height: 190px; margin: 4px 12px; overflow-y: auto; }
+    .empty { padding: 18px; color: #929baa; text-align: center; font-size: .85rem; }
 
-        .btn-primary {
-            background: #4f8cff;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #3b7ae0;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(79, 140, 255, 0.35);
-        }
+    .saved-item {
+      margin-bottom: 6px;
+      padding: 9px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 9px;
+      background: var(--soft);
+      cursor: pointer;
+    }
 
-        .btn-outline {
-            background: white;
-            color: #4f8cff;
-            border: 2px solid #4f8cff;
-        }
-        .btn-outline:hover {
-            background: #f0f6ff;
-        }
+    .saved-item:hover { background: #edf2fa; }
+    .saved-info { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .83rem; }
+    .delete-item { padding: 4px 7px; color: var(--red); border: 0; border-radius: 6px; background: transparent; cursor: pointer; }
+    .delete-item:hover { background: #fee2e2; }
 
-        .btn-ghost {
-            background: #f0f2f5;
-            color: #4b5563;
-        }
-        .btn-ghost:hover {
-            background: #e2e6ec;
-        }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      z-index: 99;
+      max-width: min(520px, calc(100vw - 32px));
+      padding: 11px 18px;
+      color: #fff;
+      border-radius: 10px;
+      background: #253044;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+      opacity: 0;
+      transform: translate(-50%, 14px);
+      pointer-events: none;
+      transition: .2s;
+    }
 
-        .btn-success {
-            background: #10b981;
-            color: white;
-        }
-        .btn-success:hover {
-            background: #059669;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
-        }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-        .right-panel {
-            flex: 1;
-            background: #f8f9fc;
-            border: 2px solid #cbd5e1;
-            border-radius: 16px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            min-width: 400px;
-            transition: border-color 0.3s, background 0.3s;
-            position: relative;
-        }
+    @media (max-width: 900px) {
+      body { padding: 10px; }
+      .app { min-height: calc(100vh - 20px); grid-template-columns: 1fr; padding: 12px; border-radius: 15px; }
+      .image-card { min-height: 430px; }
+      .writing { min-height: 500px; }
+    }
 
-        .right-panel.dragover {
-            border-color: #4f8cff;
-            background: #edf3ff;
-        }
-
-        .upload-header {
-            padding: 12px 16px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            background: #ffffff;
-            border-bottom: 1px solid #e0e5ec;
-        }
-
-        .image-size-control {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            color: #6b7a8d;
-        }
-
-        .image-size-control input[type="range"] {
-            width: 100px;
-            cursor: pointer;
-        }
-
-        .image-size-control span {
-            font-weight: 600;
-            color: #2c3e50;
-            min-width: 35px;
-            text-align: center;
-        }
-
-        .image-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            min-height: 0;
-            overflow: hidden;
-            background: #ffffff;
-            padding: 0;
-            margin: 0;
-            cursor: pointer;
-        }
-
-        .image-placeholder {
-            text-align: center;
-            color: #9aa5b5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            pointer-events: none;
-        }
-
-        .image-placeholder .icon {
-            font-size: 4rem;
-            opacity: 0.6;
-        }
-
-        .image-placeholder p {
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        .image-placeholder small {
-            font-size: 0.9rem;
-            color: #b0b8c5;
-        }
-
-        #previewImage {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .upload-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding: 12px 16px;
-            flex-shrink: 0;
-            justify-content: center;
-            background: #ffffff;
-            border-top: 1px solid #e0e5ec;
-        }
-
-        .file-input-label {
-            padding: 10px 18px;
-            background: #f8f9fc;
-            border: 2px solid #cbd5e1;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #2c3e50;
-            cursor: pointer;
-            transition: all 0.25s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .file-input-label:hover {
-            border-color: #4f8cff;
-            color: #4f8cff;
-            background: #f8faff;
-        }
-
-        .btn-remove {
-            padding: 10px 16px;
-            background: #fff0f0;
-            border: 2px solid #fca5a5;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #dc2626;
-            cursor: pointer;
-            transition: all 0.25s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-remove:hover {
-            background: #fee2e2;
-        }
-
-        #fileInput,
-        #jsonInput {
-            display: none;
-        }
-
-        .saved-questions-container {
-            max-height: 150px;
-            overflow-y: auto;
-            background: #ffffff;
-            border-radius: 12px;
-            border: 1px solid #e0e5ec;
-            padding: 10px;
-            margin: 8px 16px;
-            flex-shrink: 0;
-        }
-
-        .saved-question-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 10px;
-            border-radius: 8px;
-            background: #f8fafc;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: background 0.2s;
-            gap: 10px;
-        }
-
-        .saved-question-item:hover {
-            background: #eef2f7;
-        }
-
-        .saved-question-item .info {
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            font-weight: 500;
-            color: #2c3e50;
-        }
-
-        .saved-question-item .delete-btn {
-            background: none;
-            border: none;
-            color: #dc2626;
-            cursor: pointer;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-        .saved-question-item .delete-btn:hover {
-            background: #fee2e2;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2c3e50;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s, transform 0.4s;
-            z-index: 1000;
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        @media (max-width: 1200px) {
-            .right-panel {
-                min-width: 350px;
-            }
-        }
-
-        @media (max-width: 900px) {
-            .container {
-                flex-direction: column;
-                height: auto;
-                min-height: 90vh;
-                padding: 16px;
-                gap: 14px;
-            }
-            .left-panel,
-            .right-panel {
-                flex: unset;
-                width: 100%;
-                min-width: unset;
-            }
-            .right-panel {
-                min-height: 400px;
-            }
-            .writing-area textarea {
-                min-height: 250px;
-            }
-            .chart-types {
-                gap: 6px;
-            }
-            .chart-type-btn {
-                padding: 5px 10px;
-                font-size: 0.75rem;
-            }
-        }
-    </style>
+    @media (min-width: 901px) and (max-width: 1250px) {
+      .app {
+        grid-template-columns: minmax(0, 1fr) minmax(480px, 1fr);
+      }
+    }
+  </style>
 </head>
 <body>
+  <main class="app">
+    <section class="column">
+      <div class="chart-types card" id="chartTypes">
+        <strong>📊 Loại biểu đồ:</strong>
+        <button class="chip" type="button" data-chart="line">📈 Line</button>
+        <button class="chip" type="button" data-chart="pie">🥧 Pie</button>
+        <button class="chip" type="button" data-chart="bar">📊 Bar</button>
+        <button class="chip" type="button" data-chart="mix">🔀 Mix</button>
+        <button class="chip" type="button" data-chart="map">🗺️ Map</button>
+        <button class="chip" type="button" data-chart="process">⚙️ Process</button>
+      </div>
 
-    <div class="container">
-        <div class="left-panel">
-            <div class="chart-types">
-                <span class="chart-types-label">📊 Loại biểu đồ:</span>
-                <button class="chart-type-btn" data-chart="line">📈 Line</button>
-                <button class="chart-type-btn" data-chart="pie">🥧 Pie</button>
-                <button class="chart-type-btn" data-chart="bar">📊 Bar</button>
-                <button class="chart-type-btn" data-chart="mix">🔀 Mix</button>
-                <button class="chart-type-btn" data-chart="map">🗺️ Map</button>
-                <button class="chart-type-btn" data-chart="process">⚙️ Process</button>
-            </div>
+      <div class="question card">
+        <label class="label" for="questionInput">📋 Đề bài (Writing Task 1)</label>
+        <textarea id="questionInput" placeholder="Nhập đề bài tại đây..."></textarea>
+      </div>
 
-            <div class="question-box">
-                <label><i>📋</i> Đề bài (Writing Task 1)</label>
-                <textarea id="questionInput" placeholder="Nhập đề bài tại đây..."></textarea>
-            </div>
+      <div class="writing card">
+        <div class="toolbar">
+          <span class="toolbar-title">✍️ Bài viết của bạn</span>
+          <label class="control">Cỡ chữ
+            <input id="fontSize" type="range" min="12" max="28" value="18">
+            <output id="fontSizeValue">18px</output>
+          </label>
+          <span class="counter"><b id="wordCount">0</b> từ</span>
+        </div>
+        <textarea id="essayInput" placeholder="Viết bài phân tích biểu đồ tại đây..."></textarea>
+        <div class="actions">
+          <button class="btn btn-primary" id="saveEssay" type="button">💾 Lưu bài .txt</button>
+          <button class="btn btn-light" id="clearEssay" type="button">🗑️ Xóa bài viết</button>
+          <button class="btn btn-light" id="fillSample" type="button">📄 Điền mẫu</button>
+        </div>
+      </div>
+    </section>
 
-            <div class="writing-area">
-                <div class="writing-header">
-                    <span class="title">✍️ Bài viết của bạn</span>
-                    <div class="font-size-control">
-                        <span>🔤 Cỡ chữ:</span>
-                        <input type="range" id="fontSizeSlider" min="12" max="28" value="18" step="1">
-                        <span id="fontSizeValue">18px</span>
-                    </div>
-                    <div class="word-count"><span id="wordCount">0</span> từ</div>
-                </div>
-                <textarea id="essayInput" placeholder="Viết bài phân tích biểu đồ của bạn tại đây..."></textarea>
-                <div class="button-group">
-                    <button class="btn btn-primary" id="saveBtn">💾 Lưu bài .txt</button>
-                    <button class="btn btn-outline" id="clearBtn">🗑️ Xóa bài viết</button>
-                    <button class="btn btn-ghost" id="sampleBtn">📄 Điền mẫu</button>
-                </div>
-            </div>
+    <section class="column">
+      <div class="image-card card" id="dropZone">
+        <div class="toolbar">
+          <span class="toolbar-title">🖼️ Biểu đồ / Hình ảnh</span>
+          <label class="control">Kích thước
+            <input id="imageSize" type="range" min="30" max="100" value="100">
+            <output id="imageSizeValue">100%</output>
+          </label>
         </div>
 
-        <div class="right-panel" id="dropZone">
-            <div class="upload-header">
-                <span>🖼️ Biểu đồ / Hình ảnh</span>
-                <div class="image-size-control">
-                    <span>🔍 Kích thước:</span>
-                    <input type="range" id="imageSizeSlider" min="30" max="100" value="100" step="1">
-                    <span id="imageSizeValue">100%</span>
-                </div>
-            </div>
-            <div class="image-container" id="imageContainer">
-                <div class="image-placeholder" id="placeholder">
-                    <div class="icon">📈</div>
-                    <p>Click hoặc kéo thả hình vào đây</p>
-                    <small>Ctrl+V để dán hình từ clipboard</small>
-                </div>
-                <img id="previewImage" src="#" alt="Biểu đồ xem trước">
-            </div>
-            <div class="upload-actions">
-                <label class="file-input-label" for="fileInput" id="fileInputLabel">
-                    📁 Chọn hình
-                </label>
-                <input type="file" id="fileInput" accept="image/*">
-                <button class="btn-remove" id="removeImageBtn">✖ Gỡ hình</button>
-            </div>
-
-            <div style="padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-                <button class="btn btn-success" id="addToCollectionBtn">➕ Thêm vào bộ đề</button>
-                <button class="btn btn-ghost" id="exportJsonBtn">📤 Xuất JSON</button>
-                <label class="btn btn-outline" for="jsonInput" style="cursor: pointer;">📥 Nhập JSON</label>
-                <input type="file" id="jsonInput" accept=".json">
-            </div>
-
-            <div style="padding: 8px 16px 12px; display: flex; flex-direction: column; min-height: 0;">
-                <div style="font-weight: 600; font-size: 0.85rem; color: #2c3e50; margin-bottom: 6px;">📚 Bộ đề đã lưu (<span id="savedCount">0</span>)</div>
-                <div class="saved-questions-container" id="savedList">
-                    <div style="color: #9aa5b5; text-align: center; padding: 10px; font-size: 0.85rem;">Chưa có đề nào</div>
-                </div>
-            </div>
+        <div class="image-stage" id="imageStage" tabindex="0" role="button" aria-label="Chọn hoặc dán ảnh">
+          <div class="placeholder" id="placeholder">
+            <div class="placeholder-icon">📈</div>
+            <strong>Bấm hoặc kéo thả hình vào đây</strong>
+            <small>Mac: Cmd+V · Windows: Ctrl+V<br>Hỗ trợ JPG, PNG, WEBP, GIF và SVG</small>
+          </div>
+          <img id="previewImage" alt="Biểu đồ xem trước">
         </div>
-    </div>
 
-    <div class="toast" id="toast"></div>
+        <div class="actions image-actions">
+          <label class="btn btn-light" for="fileInput">📁 Chọn hình</label>
+          <input id="fileInput" type="file" accept="image/*">
+          <button class="btn btn-danger" id="removeImage" type="button">✖ Gỡ hình</button>
+        </div>
+      </div>
 
-    <script>
-        (function() {
-            const questionInput = document.getElementById('questionInput');
-            const essayInput = document.getElementById('essayInput');
-            const wordCountSpan = document.getElementById('wordCount');
-            const saveBtn = document.getElementById('saveBtn');
-            const clearBtn = document.getElementById('clearBtn');
-            const sampleBtn = document.getElementById('sampleBtn');
-            const fileInput = document.getElementById('fileInput');
-            const previewImage = document.getElementById('previewImage');
-            const placeholder = document.getElementById('placeholder');
-            const dropZone = document.getElementById('dropZone');
-            const imageContainer = document.getElementById('imageContainer');
-            const removeImageBtn = document.getElementById('removeImageBtn');
-            const toast = document.getElementById('toast');
-            const chartTypeButtons = document.querySelectorAll('.chart-type-btn');
-            const addToCollectionBtn = document.getElementById('addToCollectionBtn');
-            const exportJsonBtn = document.getElementById('exportJsonBtn');
-            const jsonInput = document.getElementById('jsonInput');
-            const savedList = document.getElementById('savedList');
-            const savedCountSpan = document.getElementById('savedCount');
-            const fontSizeSlider = document.getElementById('fontSizeSlider');
-            const fontSizeValue = document.getElementById('fontSizeValue');
-            const imageSizeSlider = document.getElementById('imageSizeSlider');
-            const imageSizeValue = document.getElementById('imageSizeValue');
+      <div class="collection card">
+        <div class="actions image-actions">
+          <button class="btn btn-success" id="addQuestion" type="button">➕ Thêm vào bộ đề</button>
+          <button class="btn btn-light" id="exportJson" type="button">📤 Xuất JSON</button>
+          <label class="btn btn-light" for="jsonInput">📥 Nhập JSON</label>
+          <input id="jsonInput" type="file" accept="application/json,.json">
+        </div>
+        <div class="collection-title">📚 Bộ đề đã lưu (<span id="savedCount">0</span>)</div>
+        <div class="saved-list" id="savedList"></div>
+      </div>
+    </section>
+  </main>
 
-            let currentChartType = '';
-            let savedQuestions = [];
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-            chartTypeButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    chartTypeButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentChartType = this.getAttribute('data-chart');
-                });
-            });
+  <script>
+    (() => {
+      'use strict';
 
-            fontSizeSlider.addEventListener('input', function() {
-                const size = this.value;
-                essayInput.style.fontSize = size + 'px';
-                fontSizeValue.textContent = size + 'px';
-                localStorage.setItem('ielts_font_size', size);
-            });
+      const $ = id => document.getElementById(id);
+      const questionInput = $('questionInput');
+      const essayInput = $('essayInput');
+      const wordCount = $('wordCount');
+      const fontSize = $('fontSize');
+      const fontSizeValue = $('fontSizeValue');
+      const dropZone = $('dropZone');
+      const imageStage = $('imageStage');
+      const fileInput = $('fileInput');
+      const previewImage = $('previewImage');
+      const placeholder = $('placeholder');
+      const imageSize = $('imageSize');
+      const imageSizeValue = $('imageSizeValue');
+      const savedList = $('savedList');
+      const savedCount = $('savedCount');
+      const jsonInput = $('jsonInput');
+      const toast = $('toast');
+      const chartButtons = [...document.querySelectorAll('[data-chart]')];
 
-            const savedFontSize = localStorage.getItem('ielts_font_size');
-            if (savedFontSize) {
-                fontSizeSlider.value = savedFontSize;
-                essayInput.style.fontSize = savedFontSize + 'px';
-                fontSizeValue.textContent = savedFontSize + 'px';
-            }
+      const STORAGE_KEY = 'ielts_task_1_questions_v2';
+      const FONT_KEY = 'ielts_task_1_font_size';
+      const IMAGE_SIZE_KEY = 'ielts_task_1_image_size';
+      const MAX_FILE_SIZE = 20 * 1024 * 1024;
+      let currentChartType = '';
+      let savedQuestions = [];
+      let toastTimer;
 
-            imageSizeSlider.addEventListener('input', function() {
-                const size = this.value;
-                previewImage.style.width = size + '%';
-                previewImage.style.height = size + '%';
-                imageSizeValue.textContent = size + '%';
-                localStorage.setItem('ielts_image_size', size);
-            });
+      function notify(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+      }
 
-            const savedImageSize = localStorage.getItem('ielts_image_size');
-            if (savedImageSize) {
-                imageSizeSlider.value = savedImageSize;
-                previewImage.style.width = savedImageSize + '%';
-                previewImage.style.height = savedImageSize + '%';
-                imageSizeValue.textContent = savedImageSize + '%';
-            }
+      function updateWordCount() {
+        const text = essayInput.value.trim();
+        wordCount.textContent = text ? text.split(/\s+/).length : 0;
+      }
 
-            function updateWordCount() {
-                const text = essayInput.value.trim();
-                const words = text.length === 0 ? 0 : text.split(/\s+/).filter(w => w.length > 0).length;
-                wordCountSpan.textContent = words;
-            }
+      function selectChart(type) {
+        currentChartType = type || '';
+        chartButtons.forEach(button => {
+          button.classList.toggle('active', button.dataset.chart === currentChartType);
+        });
+      }
 
-            essayInput.addEventListener('input', updateWordCount);
+      function showImage(src) {
+        if (!src) return;
+        previewImage.onload = () => notify('🖼️ Đã tải hình lên!');
+        previewImage.onerror = () => {
+          removeCurrentImage(false);
+          notify('⚠️ Không đọc được hình này.');
+        };
+        previewImage.src = src;
+        previewImage.style.display = 'block';
+        placeholder.style.display = 'none';
+      }
 
-            function saveEssay() {
-                const question = questionInput.value.trim() || 'Không có đề bài';
-                const essay = essayInput.value.trim();
-                if (!essay) {
-                    showToast('⚠️ Bạn chưa viết gì để lưu!');
-                    return;
-                }
-                const chartType = currentChartType ? `Loại biểu đồ: ${currentChartType}` : 'Loại biểu đồ: Chưa chọn';
-                const content = `${chartType}\n\nĐỀ BÀI:\n${question}\n\nBÀI VIẾT:\n${essay}\n\n---\nSố từ: ${wordCountSpan.textContent}`;
-                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'ielts-writing-task1.txt';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showToast('✅ Đã lưu bài viết thành công!');
-            }
+      function removeCurrentImage(showMessage = true) {
+        previewImage.removeAttribute('src');
+        previewImage.style.display = 'none';
+        placeholder.style.display = 'block';
+        fileInput.value = '';
+        if (showMessage) notify('Đã gỡ hình.');
+      }
 
-            saveBtn.addEventListener('click', saveEssay);
+      function readImageFile(file) {
+        if (!file) return;
+        if (!file.type || !file.type.startsWith('image/')) {
+          notify('⚠️ Vui lòng chọn đúng file hình ảnh.');
+          return;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+          notify('⚠️ Hình quá lớn. Vui lòng chọn hình dưới 20 MB.');
+          return;
+        }
 
-            function clearEssay() {
-                essayInput.value = '';
-                updateWordCount();
-                showToast('🗑️ Đã xóa nội dung bài viết');
-            }
+        const reader = new FileReader();
+        reader.onload = event => showImage(event.target.result);
+        reader.onerror = () => notify('⚠️ Không thể đọc file hình.');
+        reader.readAsDataURL(file);
+      }
 
-            clearBtn.addEventListener('click', clearEssay);
+      function handlePaste(event) {
+        const items = [...(event.clipboardData?.items || [])];
+        const imageItem = items.find(item => item.kind === 'file' && item.type.startsWith('image/'));
+        if (imageItem) {
+          event.preventDefault();
+          readImageFile(imageItem.getAsFile());
+          return;
+        }
 
-            function fillSample() {
-                const sampleQuestion = 'The chart below shows the percentage of households in owned and rented accommodation in England and Wales between 1918 and 2011.';
-                const sampleEssay = `The bar chart illustrates the proportion of households living in owned and rented accommodation in England and Wales over a period of 93 years, from 1918 to 2011.
+        const pastedHtml = event.clipboardData?.getData('text/html') || '';
+        if (pastedHtml) {
+          const doc = new DOMParser().parseFromString(pastedHtml, 'text/html');
+          const src = doc.querySelector('img')?.src;
+          if (src) {
+            event.preventDefault();
+            showImage(src);
+          }
+        }
+      }
 
-Overall, there was a significant shift from renting to owning during the first half of the period, while the trend reversed in the later years.
+      function download(name, content, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 500);
+      }
 
-In 1918, around 78% of households rented their accommodation, while only 22% owned their homes. Over the following decades, the percentage of renters decreased steadily, reaching approximately 50% by 1971. Meanwhile, the ownership rate rose correspondingly, surpassing renting for the first time around 1971.
+      function saveEssayFile() {
+        const essay = essayInput.value.trim();
+        if (!essay) {
+          notify('⚠️ Bạn chưa viết bài.');
+          return;
+        }
+        const question = questionInput.value.trim() || 'Không có đề bài';
+        const content = [
+          `Loại biểu đồ: ${currentChartType || 'Chưa chọn'}`,
+          '', 'ĐỀ BÀI:', question,
+          '', 'BÀI VIẾT:', essay,
+          '', '---', `Số từ: ${wordCount.textContent}`
+        ].join('\n');
+        download('ielts-writing-task-1.txt', content, 'text/plain;charset=utf-8');
+        notify('✅ Đã lưu bài viết.');
+      }
 
-From 1971 onwards, the percentage of households owning their homes continued to increase, peaking at about 69% in 2001. After that, it declined slightly to 64% by 2011. In contrast, the proportion of renters fell to a low of 31% in 2001, then rose again to 36% by 2011.
+      function loadSavedQuestions() {
+        try {
+          const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          savedQuestions = Array.isArray(data) ? data : [];
+        } catch {
+          savedQuestions = [];
+        }
+        renderSavedQuestions();
+      }
 
-In conclusion, the data shows a clear long-term trend towards home ownership until the early 2000s, followed by a modest resurgence in renting by 2011.`;
+      function persistQuestions() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(savedQuestions));
+          renderSavedQuestions();
+          return true;
+        } catch (error) {
+          console.error(error);
+          notify('⚠️ Bộ nhớ trình duyệt đã đầy. Hãy xuất JSON rồi xóa bớt đề.');
+          return false;
+        }
+      }
 
-                questionInput.value = sampleQuestion;
-                essayInput.value = sampleEssay;
-                updateWordCount();
+      function renderSavedQuestions() {
+        savedList.replaceChildren();
+        savedCount.textContent = savedQuestions.length;
 
-                chartTypeButtons.forEach(btn => {
-                    if (btn.getAttribute('data-chart') === 'bar') {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-                currentChartType = 'bar';
-                showToast('📄 Đã điền đề, bài viết mẫu (Bar chart)');
-            }
+        if (!savedQuestions.length) {
+          const empty = document.createElement('div');
+          empty.className = 'empty';
+          empty.textContent = 'Chưa có đề nào';
+          savedList.appendChild(empty);
+          return;
+        }
 
-            sampleBtn.addEventListener('click', fillSample);
+        savedQuestions.forEach((item, index) => {
+          const row = document.createElement('div');
+          row.className = 'saved-item';
+          row.title = 'Bấm để mở đề';
 
-            function showImage(src) {
-                previewImage.src = src;
-                previewImage.style.display = 'block';
-                placeholder.style.display = 'none';
-                const currentSize = imageSizeSlider.value;
-                previewImage.style.width = currentSize + '%';
-                previewImage.style.height = currentSize + '%';
-                showToast('🖼️ Đã tải hình biểu đồ lên!');
-            }
+          const info = document.createElement('div');
+          info.className = 'saved-info';
+          info.textContent = `${item.chartType || 'unknown'} · ${item.question || 'Chưa có đề bài'}`;
 
-            fileInput.addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    const file = e.target.files[0];
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            showImage(event.target.result);
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        showToast('⚠️ Vui lòng chọn file hình ảnh!');
-                    }
-                }
-                fileInput.value = '';
-            });
+          const remove = document.createElement('button');
+          remove.className = 'delete-item';
+          remove.type = 'button';
+          remove.textContent = '✖';
+          remove.title = 'Xóa đề này';
+          remove.addEventListener('click', event => {
+            event.stopPropagation();
+            const oldItems = [...savedQuestions];
+            savedQuestions.splice(index, 1);
+            if (!persistQuestions()) savedQuestions = oldItems;
+            else notify('Đã xóa đề.');
+          });
 
-            imageContainer.addEventListener('click', function() {
-                fileInput.click();
-            });
+          row.addEventListener('click', () => loadQuestion(item));
+          row.append(info, remove);
+          savedList.appendChild(row);
+        });
+      }
 
-            dropZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.add('dragover');
-            });
+      function loadQuestion(item) {
+        questionInput.value = item.question || '';
+        selectChart(item.chartType || '');
+        if (item.image) showImage(item.image);
+        else removeCurrentImage(false);
+        notify('📂 Đã mở đề.');
+      }
 
-            dropZone.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.remove('dragover');
-            });
+      function addCurrentQuestion() {
+        const question = questionInput.value.trim();
+        const image = previewImage.getAttribute('src') || '';
+        if (!question && !image) {
+          notify('⚠️ Hãy nhập đề bài hoặc thêm hình trước.');
+          return;
+        }
 
-            dropZone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.remove('dragover');
+        const oldItems = [...savedQuestions];
+        savedQuestions.unshift({
+          question: question || 'Chưa có đề bài',
+          chartType: currentChartType || 'unknown',
+          image,
+          createdAt: new Date().toISOString()
+        });
+        if (!persistQuestions()) savedQuestions = oldItems;
+        else notify('✅ Đã thêm vào bộ đề.');
+      }
 
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    const file = files[0];
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            showImage(event.target.result);
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        showToast('⚠️ Vui lòng thả file hình ảnh!');
-                    }
-                    return;
-                }
+      function exportQuestions() {
+        if (!savedQuestions.length) {
+          notify('⚠️ Bộ đề đang trống.');
+          return;
+        }
+        download(
+          'ielts-task-1-questions.json',
+          JSON.stringify(savedQuestions, null, 2),
+          'application/json;charset=utf-8'
+        );
+        notify('✅ Đã xuất bộ đề.');
+      }
 
-                const html = e.dataTransfer.getData('text/html');
-                const text = e.dataTransfer.getData('text/plain');
-                
-                if (html) {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = html;
-                    const img = tempDiv.querySelector('img');
-                    if (img && img.src) {
-                        showImage(img.src);
-                        return;
-                    }
-                }
-                
-                if (text && (text.startsWith('http') || text.startsWith('data:image'))) {
-                    showImage(text);
-                    return;
-                }
+      function importQuestions(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = event => {
+          try {
+            const data = JSON.parse(event.target.result);
+            if (!Array.isArray(data)) throw new Error('JSON must be an array');
+            const validItems = data.filter(item => item && typeof item === 'object');
+            const oldItems = [...savedQuestions];
+            savedQuestions = validItems;
+            if (!persistQuestions()) savedQuestions = oldItems;
+            else notify(`✅ Đã nhập ${validItems.length} đề.`);
+          } catch (error) {
+            console.error(error);
+            notify('⚠️ File JSON không hợp lệ.');
+          } finally {
+            jsonInput.value = '';
+          }
+        };
+        reader.onerror = () => notify('⚠️ Không thể đọc file JSON.');
+        reader.readAsText(file, 'utf-8');
+      }
 
-                showToast('⚠️ Không thể nhận diện hình ảnh');
-            });
+      chartButtons.forEach(button => {
+        button.addEventListener('click', () => selectChart(button.dataset.chart));
+      });
 
-            document.addEventListener('paste', function(e) {
-                const items = e.clipboardData?.items;
-                if (!items) return;
+      essayInput.addEventListener('input', updateWordCount);
 
-                for (let i = 0; i < items.length; i++) {
-                    if (items[i].type.startsWith('image/')) {
-                        const blob = items[i].getAsFile();
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            showImage(event.target.result);
-                        };
-                        reader.readAsDataURL(blob);
-                        e.preventDefault();
-                        break;
-                    }
-                }
-            });
+      fontSize.addEventListener('input', () => {
+        essayInput.style.fontSize = `${fontSize.value}px`;
+        fontSizeValue.textContent = `${fontSize.value}px`;
+        localStorage.setItem(FONT_KEY, fontSize.value);
+      });
 
-            function removeImage() {
-                previewImage.style.display = 'none';
-                previewImage.src = '#';
-                placeholder.style.display = 'flex';
-                showToast('🖼️ Đã gỡ hình biểu đồ');
-            }
+      imageSize.addEventListener('input', () => {
+        previewImage.style.width = `${imageSize.value}%`;
+        imageSizeValue.textContent = `${imageSize.value}%`;
+        localStorage.setItem(IMAGE_SIZE_KEY, imageSize.value);
+      });
 
-            removeImageBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                removeImage();
-            });
+      fileInput.addEventListener('change', () => {
+        readImageFile(fileInput.files?.[0]);
+        fileInput.value = '';
+      });
 
-            function getCurrentData() {
-                const question = questionInput.value.trim();
-                const hasImage = previewImage.style.display === 'block' && previewImage.src && previewImage.src !== '#';
-                const imageData = hasImage ? previewImage.src : '';
-                return {
-                    question: question || 'Chưa có đề bài',
-                    chartType: currentChartType || 'unknown',
-                    image: imageData,
-                    timestamp: new Date().toISOString()
-                };
-            }
+      imageStage.addEventListener('click', () => fileInput.click());
+      imageStage.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          fileInput.click();
+        }
+      });
 
-            function persistSavedQuestions() {
-                localStorage.setItem('ielts_saved_questions', JSON.stringify(savedQuestions));
-                renderSavedList();
-            }
+      ['dragenter', 'dragover'].forEach(type => {
+        dropZone.addEventListener(type, event => {
+          event.preventDefault();
+          dropZone.classList.add('dragover');
+        });
+      });
 
-            function renderSavedList() {
-                const container = savedList;
-                container.innerHTML = '';
-                savedCountSpan.textContent = savedQuestions.length;
+      ['dragleave', 'drop'].forEach(type => {
+        dropZone.addEventListener(type, event => {
+          event.preventDefault();
+          dropZone.classList.remove('dragover');
+        });
+      });
 
-                if (savedQuestions.length === 0) {
-                    container.innerHTML = '<div style="color: #9aa5b5; text-align: center; padding: 10px; font-size: 0.85rem;">Chưa có đề nào</div>';
-                    return;
-                }
+      dropZone.addEventListener('drop', event => {
+        const file = [...(event.dataTransfer?.files || [])].find(item => item.type.startsWith('image/'));
+        if (file) {
+          readImageFile(file);
+          return;
+        }
 
-                savedQuestions.forEach((q, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'saved-question-item';
-                    item.innerHTML = `
-                        <div class="info">${q.chartType} | ${q.question.substring(0, 40)}${q.question.length > 40 ? '...' : ''}</div>
-                        <button class="delete-btn" data-index="${index}" title="Xóa đề này">✖</button>
-                    `;
-                    item.addEventListener('click', function(e) {
-                        if (e.target.classList.contains('delete-btn')) return;
-                        loadQuestionToForm(q);
-                    });
-                    item.querySelector('.delete-btn').addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        savedQuestions.splice(index, 1);
-                        persistSavedQuestions();
-                        showToast('🗑️ Đã xóa đề khỏi bộ sưu tập');
-                    });
-                    container.appendChild(item);
-                });
-            }
+        const html = event.dataTransfer?.getData('text/html') || '';
+        const text = event.dataTransfer?.getData('text/plain') || '';
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const src = doc.querySelector('img')?.src || (/^(https?:|data:image)/i.test(text) ? text : '');
+        if (src) showImage(src);
+        else notify('⚠️ Không nhận diện được hình ảnh.');
+      });
 
-            function loadQuestionToForm(q) {
-                questionInput.value = q.question || '';
-                currentChartType = q.chartType || '';
-                chartTypeButtons.forEach(btn => {
-                    btn.classList.toggle('active', btn.getAttribute('data-chart') === currentChartType);
-                });
-                if (q.image) {
-                    previewImage.src = q.image;
-                    previewImage.style.display = 'block';
-                    placeholder.style.display = 'none';
-                    const currentSize = imageSizeSlider.value;
-                    previewImage.style.width = currentSize + '%';
-                    previewImage.style.height = currentSize + '%';
-                } else {
-                    previewImage.style.display = 'none';
-                    previewImage.src = '#';
-                    placeholder.style.display = 'flex';
-                }
-                showToast('📂 Đã tải đề vào form');
-            }
+      document.addEventListener('paste', handlePaste);
+      $('removeImage').addEventListener('click', event => {
+        event.stopPropagation();
+        removeCurrentImage();
+      });
 
-            function addToCollection() {
-                const data = getCurrentData();
-                if (!data.question && !data.image) {
-                    showToast('⚠️ Chưa có đề bài hoặc hình ảnh để lưu!');
-                    return;
-                }
-                savedQuestions.push(data);
-                persistSavedQuestions();
-                showToast('✅ Đã thêm vào bộ đề!');
-            }
+      $('saveEssay').addEventListener('click', saveEssayFile);
+      $('clearEssay').addEventListener('click', () => {
+        essayInput.value = '';
+        updateWordCount();
+        notify('Đã xóa bài viết.');
+      });
 
-            function exportJson() {
-                if (savedQuestions.length === 0) {
-                    showToast('⚠️ Bộ đề trống, hãy thêm đề trước khi xuất!');
-                    return;
-                }
-                const jsonStr = JSON.stringify(savedQuestions, null, 2);
-                const blob = new Blob([jsonStr], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'ielts-questions.json';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showToast('📤 Đã xuất file JSON thành công!');
-            }
+      $('fillSample').addEventListener('click', () => {
+        questionInput.value = 'The chart below shows the percentage of households in owned and rented accommodation in England and Wales between 1918 and 2011.';
+        essayInput.value = `The bar chart compares the proportions of households living in owned and rented accommodation in England and Wales from 1918 to 2011.\n\nOverall, home ownership became increasingly common during most of the period, while renting followed the opposite trend. However, both patterns changed slightly in the final decade.\n\nIn 1918, approximately 78% of households rented their homes, compared with only 22% that owned them. The gap then narrowed steadily, and the two figures were equal at 50% in 1971.\n\nAfter 1971, ownership continued to rise and reached a peak of about 69% in 2001. By contrast, renting fell to roughly 31%. In the final year, the ownership rate declined to around 64%, whereas the proportion of renters recovered to 36%.`;
+        selectChart('bar');
+        updateWordCount();
+        notify('📄 Đã điền bài mẫu.');
+      });
 
-            function importJson(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = JSON.parse(e.target.result);
-                        if (!Array.isArray(data)) {
-                            throw new Error('File JSON không đúng định dạng (cần là mảng các đề)');
-                        }
-                        savedQuestions = data;
-                        persistSavedQuestions();
-                        showToast('📥 Đã nhập bộ đề từ JSON!');
-                    } catch (err) {
-                        showToast('❌ Lỗi: ' + err.message);
-                    }
-                };
-                reader.readAsText(file);
-            }
+      $('addQuestion').addEventListener('click', addCurrentQuestion);
+      $('exportJson').addEventListener('click', exportQuestions);
+      jsonInput.addEventListener('change', () => importQuestions(jsonInput.files?.[0]));
 
-            function loadSavedFromLocalStorage() {
-                const saved = localStorage.getItem('ielts_saved_questions');
-                if (saved) {
-                    try {
-                        savedQuestions = JSON.parse(saved);
-                    } catch (e) {
-                        savedQuestions = [];
-                    }
-                }
-                renderSavedList();
-            }
+      const savedFont = Number(localStorage.getItem(FONT_KEY));
+      if (savedFont >= 12 && savedFont <= 28) fontSize.value = savedFont;
+      essayInput.style.fontSize = `${fontSize.value}px`;
+      fontSizeValue.textContent = `${fontSize.value}px`;
 
-            addToCollectionBtn.addEventListener('click', addToCollection);
-            exportJsonBtn.addEventListener('click', exportJson);
-            jsonInput.addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    importJson(e.target.files[0]);
-                }
-                jsonInput.value = '';
-            });
+      const savedImageSize = Number(localStorage.getItem(IMAGE_SIZE_KEY));
+      if (savedImageSize >= 30 && savedImageSize <= 100) imageSize.value = savedImageSize;
+      previewImage.style.width = `${imageSize.value}%`;
+      imageSizeValue.textContent = `${imageSize.value}%`;
 
-            function showToast(message) {
-                toast.textContent = message;
-                toast.classList.add('show');
-                clearTimeout(toast._timeout);
-                toast._timeout = setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 2500);
-            }
-
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-                    e.preventDefault();
-                    saveEssay();
-                }
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter
+      updateWordCount();
+      loadSavedQuestions();
+    })();
+  </script>
+</body>
+</html>
