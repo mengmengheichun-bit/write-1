@@ -34,7 +34,6 @@
             padding: 20px;
         }
 
-        /* ========== LEFT PANEL ========== */
         .left-panel {
             flex: 1;
             display: flex;
@@ -293,7 +292,6 @@
             box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
         }
 
-        /* ========== RIGHT PANEL - FULL IMAGE ========== */
         .right-panel {
             flex: 1;
             background: #f8f9fc;
@@ -563,7 +561,6 @@
 <body>
 
     <div class="container">
-        <!-- LEFT: Phân loại + Đề bài + Bài viết -->
         <div class="left-panel">
             <div class="chart-types">
                 <span class="chart-types-label">📊 Loại biểu đồ:</span>
@@ -599,7 +596,6 @@
             </div>
         </div>
 
-        <!-- RIGHT: Upload hình biểu đồ + quản lý bộ đề -->
         <div class="right-panel" id="dropZone">
             <div class="upload-header">
                 <span>🖼️ Biểu đồ / Hình ảnh</span>
@@ -645,7 +641,6 @@
 
     <script>
         (function() {
-            // DOM elements
             const questionInput = document.getElementById('questionInput');
             const essayInput = document.getElementById('essayInput');
             const wordCountSpan = document.getElementById('wordCount');
@@ -673,7 +668,6 @@
             let currentChartType = '';
             let savedQuestions = [];
 
-            // ========== XỬ LÝ CHỌN LOẠI BIỂU ĐỒ ==========
             chartTypeButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
                     chartTypeButtons.forEach(b => b.classList.remove('active'));
@@ -682,7 +676,6 @@
                 });
             });
 
-            // ========== ĐIỀU CHỈNH CỠ CHỮ ==========
             fontSizeSlider.addEventListener('input', function() {
                 const size = this.value;
                 essayInput.style.fontSize = size + 'px';
@@ -697,7 +690,6 @@
                 fontSizeValue.textContent = savedFontSize + 'px';
             }
 
-            // ========== ĐIỀU CHỈNH KÍCH THƯỚC HÌNH ==========
             imageSizeSlider.addEventListener('input', function() {
                 const size = this.value;
                 previewImage.style.width = size + '%';
@@ -714,7 +706,6 @@
                 imageSizeValue.textContent = savedImageSize + '%';
             }
 
-            // ========== ĐẾM TỪ ==========
             function updateWordCount() {
                 const text = essayInput.value.trim();
                 const words = text.length === 0 ? 0 : text.split(/\s+/).filter(w => w.length > 0).length;
@@ -723,7 +714,6 @@
 
             essayInput.addEventListener('input', updateWordCount);
 
-            // ========== LƯU BÀI .TXT ==========
             function saveEssay() {
                 const question = questionInput.value.trim() || 'Không có đề bài';
                 const essay = essayInput.value.trim();
@@ -747,7 +737,6 @@
 
             saveBtn.addEventListener('click', saveEssay);
 
-            // ========== XÓA BÀI VIẾT ==========
             function clearEssay() {
                 essayInput.value = '';
                 updateWordCount();
@@ -756,7 +745,6 @@
 
             clearBtn.addEventListener('click', clearEssay);
 
-            // ========== ĐIỀN MẪU ==========
             function fillSample() {
                 const sampleQuestion = 'The chart below shows the percentage of households in owned and rented accommodation in England and Wales between 1918 and 2011.';
                 const sampleEssay = `The bar chart illustrates the proportion of households living in owned and rented accommodation in England and Wales over a period of 93 years, from 1918 to 2011.
@@ -786,9 +774,7 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
 
             sampleBtn.addEventListener('click', fillSample);
 
-            // ========== XỬ LÝ HÌNH ẢNH ==========
             function showImage(src) {
-                console.log('Hiển thị hình...');
                 previewImage.src = src;
                 previewImage.style.display = 'block';
                 placeholder.style.display = 'none';
@@ -798,9 +784,7 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 showToast('🖼️ Đã tải hình biểu đồ lên!');
             }
 
-            // Xử lý khi chọn file
             fileInput.addEventListener('change', function(e) {
-                console.log('File selected:', e.target.files);
                 if (e.target.files.length > 0) {
                     const file = e.target.files[0];
                     if (file.type.startsWith('image/')) {
@@ -816,13 +800,10 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 fileInput.value = '';
             });
 
-            // Click vào image container để mở file picker
             imageContainer.addEventListener('click', function() {
-                console.log('Click vào image container');
                 fileInput.click();
             });
 
-            // Kéo thả file
             dropZone.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -839,11 +820,9 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 e.preventDefault();
                 e.stopPropagation();
                 dropZone.classList.remove('dragover');
-                console.log('Drop event fired');
 
                 const files = e.dataTransfer.files;
                 if (files.length > 0) {
-                    console.log('File dropped:', files[0]);
                     const file = files[0];
                     if (file.type.startsWith('image/')) {
                         const reader = new FileReader();
@@ -857,7 +836,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                     return;
                 }
 
-                // Xử lý kéo từ web
                 const html = e.dataTransfer.getData('text/html');
                 const text = e.dataTransfer.getData('text/plain');
                 
@@ -879,9 +857,7 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 showToast('⚠️ Không thể nhận diện hình ảnh');
             });
 
-            // Dán hình từ clipboard (Ctrl+V)
             document.addEventListener('paste', function(e) {
-                console.log('Paste event fired');
                 const items = e.clipboardData?.items;
                 if (!items) return;
 
@@ -899,7 +875,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 }
             });
 
-            // Gỡ hình
             function removeImage() {
                 previewImage.style.display = 'none';
                 previewImage.src = '#';
@@ -912,7 +887,6 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 removeImage();
             });
 
-            // ========== QUẢN LÝ BỘ ĐỀ ==========
             function getCurrentData() {
                 const question = questionInput.value.trim();
                 const hasImage = previewImage.style.display === 'block' && previewImage.src && previewImage.src !== '#';
@@ -1007,4 +981,61 @@ In conclusion, the data shows a clear long-term trend towards home ownership unt
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                URL.re
+                URL.revokeObjectURL(url);
+                showToast('📤 Đã xuất file JSON thành công!');
+            }
+
+            function importJson(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (!Array.isArray(data)) {
+                            throw new Error('File JSON không đúng định dạng (cần là mảng các đề)');
+                        }
+                        savedQuestions = data;
+                        persistSavedQuestions();
+                        showToast('📥 Đã nhập bộ đề từ JSON!');
+                    } catch (err) {
+                        showToast('❌ Lỗi: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            function loadSavedFromLocalStorage() {
+                const saved = localStorage.getItem('ielts_saved_questions');
+                if (saved) {
+                    try {
+                        savedQuestions = JSON.parse(saved);
+                    } catch (e) {
+                        savedQuestions = [];
+                    }
+                }
+                renderSavedList();
+            }
+
+            addToCollectionBtn.addEventListener('click', addToCollection);
+            exportJsonBtn.addEventListener('click', exportJson);
+            jsonInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    importJson(e.target.files[0]);
+                }
+                jsonInput.value = '';
+            });
+
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                clearTimeout(toast._timeout);
+                toast._timeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    saveEssay();
+                }
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter
