@@ -461,14 +461,50 @@
         notify('✅ Đã lưu bài viết.');
       }
 
-      function loadSavedQuestions() {
+      async function loadSavedQuestions() {
+        // Giữ bộ đề riêng đã lưu trên trình duyệt này, kể cả bộ đề rỗng.
+        let localData = null;
         try {
-          const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-          savedQuestions = Array.isArray(data) ? data : [];
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw !== null) {
+            const data = JSON.parse(raw);
+            if (Array.isArray(data)) localData = data;
+          }
         } catch {
-          savedQuestions = [];
+          // Vẫn tải bộ đề công khai khi bộ nhớ trình duyệt không dùng được.
         }
+
+        if (localData !== null) {
+          savedQuestions = localData.filter(item => item && typeof item === 'object');
+          renderSavedQuestions();
+          return;
+        }
+
+        // File JSON phải nằm cùng thư mục với trang HTML trên GitHub Pages.
+        // Không ghi bản công khai vào localStorage: ảnh lớn có thể vượt hạn mức.
+        savedQuestions = [];
         renderSavedQuestions();
+        try {
+          const url = new URL('./ielts-task-1-questions.json', window.location.href);
+          const response = await fetch(url, { cache: 'no-store' });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const data = await response.json();
+          if (!Array.isArray(data)) throw new Error('JSON must be an array');
+
+          // Không ghi đè bộ đề người dùng vừa thêm/nhập trong lúc đang tải.
+          let hasLocalChanges = savedQuestions.length > 0;
+          try {
+            hasLocalChanges = hasLocalChanges || localStorage.getItem(STORAGE_KEY) !== null;
+          } catch { /* Bộ nhớ trình duyệt có thể bị chặn. */ }
+          if (hasLocalChanges) return;
+
+          savedQuestions = data.filter(item => item && typeof item === 'object');
+          renderSavedQuestions();
+          notify(`✅ Đã tải ${savedQuestions.length} đề từ website. Bấm một đề để mở ảnh.`);
+        } catch (error) {
+          console.warn('Không tải được bộ đề công khai:', error);
+          notify('Chưa tải được bộ đề trên web. Bạn có thể dùng nút Nhập JSON.');
+        }
       }
 
       function persistQuestions() {
@@ -689,12 +725,16 @@
       $('exportJson').addEventListener('click', exportQuestions);
       jsonInput.addEventListener('change', () => importQuestions(jsonInput.files?.[0]));
 
-      const savedFont = Number(localStorage.getItem(FONT_KEY));
+      function readPreference(key) {
+        try { return localStorage.getItem(key); } catch { return null; }
+      }
+
+      const savedFont = Number(readPreference(FONT_KEY));
       if (savedFont >= 12 && savedFont <= 28) fontSize.value = savedFont;
       essayInput.style.fontSize = `${fontSize.value}px`;
       fontSizeValue.textContent = `${fontSize.value}px`;
 
-      const savedImageSize = Number(localStorage.getItem(IMAGE_SIZE_KEY));
+      const savedImageSize = Number(readPreference(IMAGE_SIZE_KEY));
       if (savedImageSize >= 30 && savedImageSize <= 100) imageSize.value = savedImageSize;
       previewImage.style.width = `${imageSize.value}%`;
       imageSizeValue.textContent = `${imageSize.value}%`;
