@@ -193,9 +193,33 @@
 
     .image-actions { justify-content: center; }
 
-    .collection { padding-bottom: 10px; overflow: hidden; }
-    .collection-title { padding: 12px 14px 5px; font-size: .88rem; font-weight: 750; }
-    .saved-list { max-height: 190px; margin: 4px 12px; overflow-y: auto; }
+    .collection { padding-bottom: 12px; overflow: hidden; }
+
+    .collection-heading {
+      padding: 13px 14px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .collection-title { font-size: .92rem; font-weight: 750; }
+    .collection-subtitle { margin-top: 3px; color: var(--muted); font-size: .76rem; }
+
+    .search-box {
+      width: min(260px, 48%);
+      min-width: 170px;
+      padding: 9px 12px;
+      color: var(--ink);
+      border: 1px solid #ced7e6;
+      border-radius: 9px;
+      outline: none;
+      background: #fff;
+      font-size: .84rem;
+    }
+
+    .search-box:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(79, 124, 255, .13); }
+    .saved-list { max-height: 390px; margin: 4px 12px; overflow-y: auto; scrollbar-gutter: stable; }
     .empty { padding: 18px; color: #929baa; text-align: center; font-size: .85rem; }
 
     .saved-item {
@@ -210,9 +234,30 @@
     }
 
     .saved-item:hover { background: #edf2fa; }
-    .saved-info { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .83rem; }
+    .saved-info { min-width: 0; flex: 1; }
+    .saved-question { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .84rem; font-weight: 650; }
+    .saved-meta { margin-top: 3px; color: var(--muted); font-size: .74rem; }
     .delete-item { padding: 4px 7px; color: var(--red); border: 0; border-radius: 6px; background: transparent; cursor: pointer; }
     .delete-item:hover { background: #fee2e2; }
+
+    body.modal-open { overflow: hidden; }
+    .archive-modal { position: fixed; inset: 0; z-index: 80; padding: 28px; display: none; align-items: center; justify-content: center; background: rgba(20, 30, 48, .58); backdrop-filter: blur(4px); }
+    .archive-modal.open { display: flex; }
+    .archive-panel { width: min(980px, 100%); max-height: min(820px, calc(100vh - 56px)); display: flex; flex-direction: column; overflow: hidden; border-radius: 18px; background: #fff; box-shadow: 0 28px 80px rgba(14, 24, 42, .28); }
+    .archive-header { padding: 17px 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); }
+    .archive-title { margin: 0; font-size: 1.12rem; }
+    .archive-count { margin-top: 4px; color: var(--muted); font-size: .82rem; }
+    .close-modal { width: 38px; height: 38px; flex: 0 0 auto; color: #526071; border: 1px solid #d7deea; border-radius: 10px; background: #fff; font-size: 1.1rem; cursor: pointer; }
+    .close-modal:hover { color: var(--red); background: #fff5f5; }
+    .archive-search-wrap { padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--soft); }
+    .archive-search { width: 100%; padding: 12px 14px; color: var(--ink); border: 1px solid #cbd5e3; border-radius: 11px; outline: none; background: #fff; font-size: .95rem; }
+    .archive-search:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(79, 124, 255, .13); }
+    .archive-list { min-height: 240px; padding: 16px 20px 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 10px; overflow-y: auto; scrollbar-gutter: stable; }
+    .archive-item { min-width: 0; padding: 14px; position: relative; border: 1px solid var(--line); border-radius: 12px; background: #fff; cursor: pointer; }
+    .archive-item:hover { border-color: #b9c8e6; background: #f8faff; }
+    .archive-item .saved-question { padding-right: 30px; white-space: normal; line-height: 1.45; }
+    .archive-preview { margin-top: 8px; color: #596579; font-size: .8rem; line-height: 1.5; }
+    .archive-item .delete-item { position: absolute; top: 9px; right: 9px; }
 
     .toast {
       position: fixed;
@@ -238,6 +283,13 @@
       .app { min-height: calc(100vh - 20px); grid-template-columns: 1fr; padding: 12px; border-radius: 15px; }
       .image-card { min-height: 430px; }
       .writing { min-height: 500px; }
+      .collection-heading { align-items: stretch; flex-direction: column; }
+      .search-box { width: 100%; }
+      .saved-list { max-height: 480px; }
+      .archive-modal { padding: 10px; }
+      .archive-panel { max-height: calc(100vh - 20px); }
+      .archive-list { grid-template-columns: 1fr; padding: 12px; }
+      .archive-header, .archive-search-wrap { padding-left: 14px; padding-right: 14px; }
     }
 
     @media (min-width: 901px) and (max-width: 1250px) {
@@ -316,11 +368,33 @@
           <label class="btn btn-light" for="jsonInput">📥 Nhập JSON</label>
           <input id="jsonInput" type="file" accept="application/json,.json">
         </div>
-        <div class="collection-title">📚 Bài đã lưu (<span id="savedCount">0</span>)</div>
+        <div class="collection-heading">
+          <div>
+            <div class="collection-title">📚 Kho bài đã lưu (<span id="savedCount">0</span>)</div>
+            <div class="collection-subtitle" id="collectionSubtitle">Tất cả bài · mới nhất trước</div>
+          </div>
+          <input class="search-box" id="searchSaved" type="search" placeholder="🔎 Tìm đề hoặc bài viết..." aria-label="Tìm trong bài đã lưu">
+        </div>
         <div class="saved-list" id="savedList"></div>
       </div>
     </section>
   </main>
+
+  <div class="archive-modal" id="archiveModal" role="dialog" aria-modal="true" aria-labelledby="archiveTitle" aria-hidden="true">
+    <div class="archive-panel">
+      <div class="archive-header">
+        <div>
+          <h2 class="archive-title" id="archiveTitle">Kho bài Line</h2>
+          <div class="archive-count" id="archiveCount">0 bài · mới nhất trước</div>
+        </div>
+        <button class="close-modal" id="closeArchive" type="button" aria-label="Đóng cửa sổ">✕</button>
+      </div>
+      <div class="archive-search-wrap">
+        <input class="archive-search" id="archiveSearch" type="search" placeholder="🔎 Tìm theo đề bài hoặc nội dung, ví dụ: employee" aria-label="Tìm bài trong cửa sổ">
+      </div>
+      <div class="archive-list" id="archiveList"></div>
+    </div>
+  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -343,6 +417,14 @@
       const imageSizeValue = $('imageSizeValue');
       const savedList = $('savedList');
       const savedCount = $('savedCount');
+      const searchSaved = $('searchSaved');
+      const collectionSubtitle = $('collectionSubtitle');
+      const archiveModal = $('archiveModal');
+      const archiveTitle = $('archiveTitle');
+      const archiveCount = $('archiveCount');
+      const archiveSearch = $('archiveSearch');
+      const archiveList = $('archiveList');
+      const closeArchive = $('closeArchive');
       const jsonInput = $('jsonInput');
       const toast = $('toast');
       const chartButtons = [...document.querySelectorAll('[data-chart]')];
@@ -352,6 +434,7 @@
       const IMAGE_SIZE_KEY = 'ielts_task_1_image_size';
       const MAX_FILE_SIZE = 20 * 1024 * 1024;
       let currentChartType = '';
+      let archiveChartType = '';
       let savedQuestions = [];
       let toastTimer;
 
@@ -522,22 +605,41 @@
       function renderSavedQuestions() {
         savedList.replaceChildren();
 
+        const searchTerm = searchSaved.value.trim().toLocaleLowerCase('vi');
+
         const visibleQuestions = savedQuestions
           .map((item, originalIndex) => ({ item, originalIndex }))
           .filter(({ item }) => {
-            return !currentChartType || item.chartType === currentChartType;
+            const matchesType = !currentChartType || item.chartType === currentChartType;
+            const searchableText = [item.chartType, item.question, item.essay]
+              .filter(Boolean)
+              .join(' ')
+              .toLocaleLowerCase('vi');
+            return matchesType && (!searchTerm || searchableText.includes(searchTerm));
+          })
+          .sort((a, b) => {
+            const aTime = Date.parse(a.item.createdAt || '') || 0;
+            const bTime = Date.parse(b.item.createdAt || '') || 0;
+            return bTime - aTime || a.originalIndex - b.originalIndex;
           });
 
-        savedCount.textContent = currentChartType
+        savedCount.textContent = (currentChartType || searchTerm)
           ? `${visibleQuestions.length}/${savedQuestions.length}`
           : savedQuestions.length;
+
+        const typeLabel = currentChartType
+          ? `${currentChartType.charAt(0).toUpperCase()}${currentChartType.slice(1)}`
+          : 'Tất cả bài';
+        collectionSubtitle.textContent = `${typeLabel} · mới nhất trước`;
 
         if (!visibleQuestions.length) {
           const empty = document.createElement('div');
           empty.className = 'empty';
-          empty.textContent = currentChartType
-            ? `Chưa có bài ${currentChartType}. Bấm lại tab để xem tất cả.`
-            : 'Chưa có bài nào';
+          empty.textContent = searchTerm
+            ? 'Không tìm thấy bài phù hợp.'
+            : currentChartType
+              ? `Chưa có bài ${currentChartType}. Bấm lại tab để xem tất cả.`
+              : 'Chưa có bài nào';
           savedList.appendChild(empty);
           return;
         }
@@ -549,7 +651,21 @@
 
           const info = document.createElement('div');
           info.className = 'saved-info';
-          info.textContent = `${item.chartType || 'unknown'} · ${item.question || 'Chưa có đề bài'}`;
+
+          const question = document.createElement('div');
+          question.className = 'saved-question';
+          question.textContent = item.question || 'Chưa có đề bài';
+
+          const meta = document.createElement('div');
+          meta.className = 'saved-meta';
+          const savedDate = item.createdAt && !Number.isNaN(Date.parse(item.createdAt))
+            ? new Intl.DateTimeFormat('vi-VN', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+              }).format(new Date(item.createdAt))
+            : 'Chưa rõ ngày lưu';
+          meta.textContent = `${item.chartType || 'unknown'} · ${savedDate}`;
+          info.append(question, meta);
 
           const remove = document.createElement('button');
           remove.className = 'delete-item';
@@ -568,6 +684,116 @@
           row.append(info, remove);
           savedList.appendChild(row);
         });
+      }
+
+      function formatSavedDate(value) {
+        return value && !Number.isNaN(Date.parse(value))
+          ? new Intl.DateTimeFormat('vi-VN', {
+              day: '2-digit', month: '2-digit', year: 'numeric',
+              hour: '2-digit', minute: '2-digit'
+            }).format(new Date(value))
+          : 'Chưa rõ ngày lưu';
+      }
+
+      function renderArchive() {
+        archiveList.replaceChildren();
+        const searchTerm = archiveSearch.value.trim().toLocaleLowerCase('vi');
+        const items = savedQuestions
+          .map((item, originalIndex) => ({ item, originalIndex }))
+          .filter(({ item }) => {
+            if (item.chartType !== archiveChartType) return false;
+            const text = [item.question, item.essay].filter(Boolean).join(' ').toLocaleLowerCase('vi');
+            return !searchTerm || text.includes(searchTerm);
+          })
+          .sort((a, b) => {
+            const aTime = Date.parse(a.item.createdAt || '') || 0;
+            const bTime = Date.parse(b.item.createdAt || '') || 0;
+            return bTime - aTime || a.originalIndex - b.originalIndex;
+          });
+
+        archiveCount.textContent = `${items.length} bài${searchTerm ? ' phù hợp' : ''} · mới nhất trước`;
+
+        if (!items.length) {
+          const empty = document.createElement('div');
+          empty.className = 'empty';
+          empty.style.gridColumn = '1 / -1';
+          empty.textContent = searchTerm
+            ? `Không tìm thấy bài có “${archiveSearch.value.trim()}”.`
+            : `Chưa có bài ${archiveChartType}.`;
+          archiveList.appendChild(empty);
+          return;
+        }
+
+        items.forEach(({ item, originalIndex }) => {
+          const card = document.createElement('article');
+          card.className = 'archive-item';
+          card.tabIndex = 0;
+          card.setAttribute('role', 'button');
+          card.title = 'Bấm để mở bài này';
+
+          const question = document.createElement('div');
+          question.className = 'saved-question';
+          question.textContent = item.question || 'Chưa có đề bài';
+
+          const meta = document.createElement('div');
+          meta.className = 'saved-meta';
+          meta.textContent = `${item.chartType || 'unknown'} · ${formatSavedDate(item.createdAt)}`;
+
+          const preview = document.createElement('div');
+          preview.className = 'archive-preview';
+          const essayPreview = (item.essay || '').trim();
+          preview.textContent = essayPreview
+            ? `${essayPreview.slice(0, 150)}${essayPreview.length > 150 ? '…' : ''}`
+            : 'Chưa có nội dung bài viết.';
+
+          const remove = document.createElement('button');
+          remove.className = 'delete-item';
+          remove.type = 'button';
+          remove.textContent = '✖';
+          remove.title = 'Xóa bài này';
+          remove.addEventListener('click', event => {
+            event.stopPropagation();
+            const oldItems = [...savedQuestions];
+            savedQuestions.splice(originalIndex, 1);
+            if (!persistQuestions()) savedQuestions = oldItems;
+            else {
+              renderArchive();
+              notify('Đã xóa đề.');
+            }
+          });
+
+          const openItem = () => {
+            loadQuestion(item);
+            closeArchiveModal();
+          };
+          card.addEventListener('click', openItem);
+          card.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              openItem();
+            }
+          });
+          card.append(question, meta, preview, remove);
+          archiveList.appendChild(card);
+        });
+      }
+
+      function openArchive(type) {
+        archiveChartType = type;
+        const label = `${type.charAt(0).toUpperCase()}${type.slice(1)}`;
+        archiveTitle.textContent = `Kho bài ${label}`;
+        archiveSearch.value = '';
+        renderArchive();
+        archiveModal.classList.add('open');
+        archiveModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+        setTimeout(() => archiveSearch.focus(), 0);
+      }
+
+      function closeArchiveModal() {
+        archiveModal.classList.remove('open');
+        archiveModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
       }
 
       function loadQuestion(item) {
@@ -640,11 +866,21 @@
       chartButtons.forEach(button => {
         button.addEventListener('click', () => {
           const clickedType = button.dataset.chart;
-          selectChart(currentChartType === clickedType ? '' : clickedType);
+          selectChart(clickedType);
+          openArchive(clickedType);
         });
       });
 
       essayInput.addEventListener('input', updateWordCount);
+      searchSaved.addEventListener('input', renderSavedQuestions);
+      archiveSearch.addEventListener('input', renderArchive);
+      closeArchive.addEventListener('click', closeArchiveModal);
+      archiveModal.addEventListener('click', event => {
+        if (event.target === archiveModal) closeArchiveModal();
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && archiveModal.classList.contains('open')) closeArchiveModal();
+      });
 
       fontSize.addEventListener('input', () => {
         essayInput.style.fontSize = `${fontSize.value}px`;
