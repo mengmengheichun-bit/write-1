@@ -545,44 +545,117 @@
         notify('✅ Đã lưu bài viết.');
       }
 
+      const DATABASE_NAME = 'ielts_write_1';
+      const STORE_NAME = 'workspace';
+      let databasePromise;
+      let storageReady = false;
+      let mutationQueue = Promise.resolve();
+
+      function openDatabase() {
+        if (databasePromise) return databasePromise;
+        databasePromise = new Promise((resolve, reject) => {
+          const request = indexedDB.open(DATABASE_NAME, 1);
+          let expired = false;
+          const timer = setTimeout(() => {
+            expired = true;
+            reject(new Error('Không mở được kho lưu bài. Hãy đóng các tab Writing khác rồi tải lại.'));
+          }, 8000);
+          request.onupgradeneeded = () => {
+            if (!request.result.objectStoreNames.contains(STORE_NAME)) {
+              request.result.createObjectStore(STORE_NAME);
+            }
+          };
+          request.onsuccess = () => {
+            clearTimeout(timer);
+            if (expired) { request.result.close(); return; }
+            request.result.onversionchange = () => {
+              request.result.close();
+              storageReady = false;
+              notify('Kho lưu bài đã thay đổi. Hãy tải lại trang trước khi lưu.');
+            };
+            resolve(request.result);
+          };
+          request.onerror = () => { clearTimeout(timer); reject(request.error); };
+        });
+        return databasePromise;
+      }
+
+      async function readStoredQuestions() {
+        const db = await openDatabase();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(STORE_NAME, 'readonly');
+          const request = tx.objectStore(STORE_NAME).get(STORAGE_KEY);
+          tx.oncomplete = () => resolve(request.result);
+          tx.onabort = () => reject(tx.error || new Error('Không đọc được kho bài.'));
+          tx.onerror = () => {}; // onabort handles transaction failures.
+        });
+      }
+
+      async function writeStoredQuestions(items) {
+        const db = await openDatabase();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(STORE_NAME, 'readwrite');
+          tx.objectStore(STORE_NAME).put(items, STORAGE_KEY);
+          tx.oncomplete = () => resolve();
+          tx.onabort = () => reject(tx.error || new Error('Không ghi được kho bài.'));
+          tx.onerror = () => {};
+        });
+      }
+
+      function showStorageError(error) {
+        console.error(error);
+        notify(error?.name === 'QuotaExceededError'
+          ? '⚠️ Thiết bị không còn đủ chỗ lưu. Bài mới chưa được lưu; hãy xuất JSON để sao lưu.'
+          : '⚠️ Chưa lưu được bài. Hãy cho phép website lưu dữ liệu rồi tải lại; giữ trang này để xuất JSON.');
+      }
+
       async function loadSavedQuestions() {
-        // Giữ bộ đề riêng đã lưu trên trình duyệt này, kể cả bộ đề rỗng.
-        let localData = null;
+        const valid = data => data.filter(item => item && typeof item === 'object');
+        let legacyData = null;
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
           if (raw !== null) {
             const data = JSON.parse(raw);
-            if (Array.isArray(data)) localData = data;
+            if (Array.isArray(data)) legacyData = valid(data);
           }
-        } catch {
-          // Vẫn tải bộ đề công khai khi bộ nhớ trình duyệt không dùng được.
-        }
+        } catch (error) { console.warn('Không đọc được bộ đề cũ:', error); }
 
-        if (localData !== null) {
-          savedQuestions = localData.filter(item => item && typeof item === 'object');
+        try {
+          const stored = await readStoredQuestions();
+          if (stored !== undefined && !Array.isArray(stored)) {
+            throw new Error('Kho bài có định dạng không hợp lệ.');
+          }
+          if (Array.isArray(stored)) {
+            savedQuestions = valid(stored);
+            storageReady = true;
+            renderSavedQuestions();
+            return;
+          }
+          if (legacyData !== null) {
+            savedQuestions = legacyData;
+            renderSavedQuestions();
+            // Remove the old copy only after the complete transaction succeeds.
+            await writeStoredQuestions(savedQuestions);
+            storageReady = true;
+            try { localStorage.removeItem(STORAGE_KEY); } catch {}
+            notify('✅ Đã chuyển bài cũ sang kho lưu mới.');
+            return;
+          }
+          storageReady = true;
+        } catch (error) {
+          if (legacyData !== null) savedQuestions = legacyData;
           renderSavedQuestions();
+          showStorageError(error);
           return;
         }
 
-        // File JSON phải nằm cùng thư mục với trang HTML trên GitHub Pages.
-        // Không ghi bản công khai vào localStorage: ảnh lớn có thể vượt hạn mức.
-        savedQuestions = [];
-        renderSavedQuestions();
         try {
           const url = new URL('./ielts-task-1-questions.json', window.location.href);
           const response = await fetch(url, { cache: 'no-store' });
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const data = await response.json();
           if (!Array.isArray(data)) throw new Error('JSON must be an array');
-
-          // Không ghi đè bộ đề người dùng vừa thêm/nhập trong lúc đang tải.
-          let hasLocalChanges = savedQuestions.length > 0;
-          try {
-            hasLocalChanges = hasLocalChanges || localStorage.getItem(STORAGE_KEY) !== null;
-          } catch { /* Bộ nhớ trình duyệt có thể bị chặn. */ }
-          if (hasLocalChanges) return;
-
-          savedQuestions = data.filter(item => item && typeof item === 'object');
+          savedQuestions = valid(data);
           renderSavedQuestions();
           notify(`✅ Đã tải ${savedQuestions.length} đề từ website. Bấm một đề để mở ảnh.`);
         } catch (error) {
@@ -591,16 +664,27 @@
         }
       }
 
-      function persistQuestions() {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(savedQuestions));
-          renderSavedQuestions();
-          return true;
-        } catch (error) {
-          console.error(error);
-          notify('⚠️ Bộ nhớ trình duyệt đã đầy. Hãy xuất JSON rồi xóa bớt đề.');
-          return false;
-        }
+      function persistQuestions(update) {
+        const operation = mutationQueue.then(async () => {
+          await initialLoad;
+          if (!storageReady) {
+            notify('⚠️ Kho lưu bài chưa sẵn sàng. Hãy xuất JSON sao lưu và tải lại trang.');
+            return false;
+          }
+          const nextItems = update(savedQuestions);
+          try {
+            await writeStoredQuestions(nextItems);
+            savedQuestions = nextItems;
+            renderSavedQuestions();
+            if (archiveModal.classList.contains('open')) renderArchive();
+            return true;
+          } catch (error) {
+            showStorageError(error);
+            return false;
+          }
+        });
+        mutationQueue = operation.catch(error => { showStorageError(error); return false; });
+        return mutationQueue;
       }
 
       function renderSavedQuestions() {
@@ -673,12 +757,9 @@
           remove.type = 'button';
           remove.textContent = '✖';
           remove.title = 'Xóa đề này';
-          remove.addEventListener('click', event => {
+          remove.addEventListener('click', async event => {
             event.stopPropagation();
-            const oldItems = [...savedQuestions];
-            savedQuestions.splice(originalIndex, 1);
-            if (!persistQuestions()) savedQuestions = oldItems;
-            else notify('Đã xóa đề.');
+            if (await persistQuestions(items => items.filter(entry => entry !== item))) notify('Đã xóa đề.');
           });
 
           row.addEventListener('click', () => loadQuestion(item));
@@ -752,12 +833,9 @@
           remove.type = 'button';
           remove.textContent = '✖';
           remove.title = 'Xóa bài này';
-          remove.addEventListener('click', event => {
+          remove.addEventListener('click', async event => {
             event.stopPropagation();
-            const oldItems = [...savedQuestions];
-            savedQuestions.splice(originalIndex, 1);
-            if (!persistQuestions()) savedQuestions = oldItems;
-            else {
+            if (await persistQuestions(items => items.filter(entry => entry !== item))) {
               renderArchive();
               notify('Đã xóa đề.');
             }
@@ -807,7 +885,7 @@
         notify('📂 Đã mở đề.');
       }
 
-      function addCurrentQuestion() {
+      async function addCurrentQuestion() {
         const question = questionInput.value.trim();
         const essay = essayInput.value.trim();
         const image = previewImage.getAttribute('src') || '';
@@ -816,16 +894,14 @@
           return;
         }
 
-        const oldItems = [...savedQuestions];
-        savedQuestions.unshift({
+        const newItem = {
           question: question || 'Chưa có đề bài',
           chartType: currentChartType || 'unknown',
           image,
           essay,
           createdAt: new Date().toISOString()
-        });
-        if (!persistQuestions()) savedQuestions = oldItems;
-        else notify('✅ Đã thêm vào bộ đề.');
+        };
+        if (await persistQuestions(items => [newItem, ...items])) notify('✅ Đã thêm vào bộ đề.');
       }
 
       function exportQuestions() {
@@ -844,15 +920,12 @@
       function importQuestions(file) {
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = event => {
+        reader.onload = async event => {
           try {
             const data = JSON.parse(event.target.result);
             if (!Array.isArray(data)) throw new Error('JSON must be an array');
             const validItems = data.filter(item => item && typeof item === 'object');
-            const oldItems = [...savedQuestions];
-            savedQuestions = validItems;
-            if (!persistQuestions()) savedQuestions = oldItems;
-            else notify(`✅ Đã nhập ${validItems.length} đề.`);
+            if (await persistQuestions(() => validItems)) notify(`✅ Đã nhập ${validItems.length} đề.`);
           } catch (error) {
             console.error(error);
             notify('⚠️ File JSON không hợp lệ.');
@@ -886,13 +959,13 @@
       fontSize.addEventListener('input', () => {
         essayInput.style.fontSize = `${fontSize.value}px`;
         fontSizeValue.textContent = `${fontSize.value}px`;
-        localStorage.setItem(FONT_KEY, fontSize.value);
+        try { localStorage.setItem(FONT_KEY, fontSize.value); } catch {}
       });
 
       imageSize.addEventListener('input', () => {
         previewImage.style.width = `${imageSize.value}%`;
         imageSizeValue.textContent = `${imageSize.value}%`;
-        localStorage.setItem(IMAGE_SIZE_KEY, imageSize.value);
+        try { localStorage.setItem(IMAGE_SIZE_KEY, imageSize.value); } catch {}
       });
 
       fileInput.addEventListener('change', () => {
@@ -977,8 +1050,9 @@
       imageSizeValue.textContent = `${imageSize.value}%`;
 
       updateWordCount();
-      loadSavedQuestions();
+      const initialLoad = loadSavedQuestions();
     })();
   </script>
 </body>
 </html>
+
